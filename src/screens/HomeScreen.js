@@ -99,7 +99,7 @@ export default function HomeScreen() {
       />
       <ScrollView className="absolute w-full h-full bg-black/40 " />
       {loading ? (
-        <View className="flex-1 flex-row justify-center items-center">
+        <View className="flex-1 w-full h-full flex-row justify-center items-center">
           <Progress.CircleSnail thickness={10} size={140} color="#0bb3b2" />
         </View>
       ) : (
@@ -177,8 +177,8 @@ export default function HomeScreen() {
               </Text>
             </Text>
             <View className="flex flex-row border-b pb-10  border-white/70 self-center w-full gap-2 justify-center items-center">
-              <View className="flex-row flex items-center  justify-center gap-2">
-                <View className="w-52 h-52 ">
+              <View className="flex-row flex items-center  justify-center gap-1">
+                <View className="w-[169] h-[169]">
                   <Image
                     // source={{uri: 'https:'+current?.condition?.icon}}
                     source={weatherImages[current?.condition?.text || 'other']}
@@ -195,7 +195,7 @@ export default function HomeScreen() {
                       {current?.feelslike_c}&#176;
                     </Text>
                   </Text>
-                  <Text className="text-center text-gray-300 text-xl tracking-widest font-bold translate-x-2">
+                  <Text className="text-center w-[200] text-gray-300 text-lg tracking-widest font-bold translate-x-2">
                     {current?.condition?.text}
                   </Text>
                 </View>

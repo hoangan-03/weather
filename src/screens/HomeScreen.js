@@ -25,6 +25,7 @@ export default function HomeScreen() {
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [weather, setWeather] = useState({});
+  
   const navigation = useNavigation();
   const navigateToOtherScreen = () => {
     // Navigate to the other screen

@@ -24,16 +24,30 @@ const Wind = ({route}) => {
   const fetchMyWeatherData = async () => {
     let myCity = await getData('city');
     let cityName = 'Islamabad';
+
     if (myCity) {
       cityName = myCity;
     }
+
+    // Get yesterday's date
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    // Format the date in 'YYYY-MM-DD' format
+    const formattedYesterday = `${yesterday.getFullYear()}-${(
+      yesterday.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, '0')}-${yesterday.getDate().toString().padStart(2, '0')}`;
+
     fetchHistory({
       cityName,
-      dt: '2023-11-14',
+      dt: formattedYesterday,
     }).then(data => {
       setHistory(data);
     });
   };
+
   const weather = route.params?.prop1;
   const navigation = useNavigation();
   const mapWindDirection = direction => {
@@ -70,7 +84,7 @@ const Wind = ({route}) => {
   ];
   const dataa = Array.from({length: 24}, (_, index) => {
     const hourData = weather?.forecast?.forecastday[0]?.hour[index];
-    return hourData[value === 2 ? 'wind_kph' : 'wind_mph'] ;
+    return hourData[value === 2 ? 'wind_kph' : 'wind_mph'];
   });
   const [value, setValue] = useState(2);
   const [isFocus, setIsFocus] = useState(false);

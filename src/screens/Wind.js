@@ -70,7 +70,7 @@ const Wind = ({route}) => {
   ];
   const dataa = Array.from({length: 24}, (_, index) => {
     const hourData = weather?.forecast?.forecastday[0]?.hour[index];
-    return hourData ? hourData[value === 2 ? 'wind_kph' : 'wind_mph'] : null;
+    return hourData[value === 2 ? 'wind_kph' : 'wind_mph'] ;
   });
   const [value, setValue] = useState(2);
   const [isFocus, setIsFocus] = useState(false);

@@ -25,7 +25,7 @@ export default function HomeScreen() {
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [weather, setWeather] = useState({});
-  
+
   const navigation = useNavigation();
   const navigateToOtherScreen = () => {
     // Navigate to the other screen
@@ -35,7 +35,7 @@ export default function HomeScreen() {
     // Navigate to the other screen
     navigation.navigate('Wind', {
       prop1: weather,
-    })
+    });
   };
 
   const handleSearch = search => {
@@ -67,7 +67,7 @@ export default function HomeScreen() {
 
   const fetchMyWeatherData = async () => {
     let myCity = await getData('city');
-    let cityName = 'Islamabad';
+    let cityName = 'Ha noi';
     if (myCity) {
       cityName = myCity;
     }
@@ -75,7 +75,6 @@ export default function HomeScreen() {
       cityName,
       days: '10',
     }).then(data => {
-      // console.log('got data: ',data.forecast.forecastday);
       setWeather(data);
       setLoading(false);
     });
@@ -86,7 +85,11 @@ export default function HomeScreen() {
   const {location, current, forecast} = weather;
   const screenHeight = Dimensions.get('window').height;
   const halfScreenHeight = screenHeight * 2;
-
+  const currentHour = Math.ceil(new Date().getHours());
+  const willItRain =
+    weather?.forecast?.forecastday[0]?.hour[currentHour]?.chance_of_rain;
+  const currentVision =
+    weather?.forecast?.forecastday[0]?.hour[currentHour]?.vis_km;
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -205,16 +208,16 @@ export default function HomeScreen() {
             {/* other stats */}
             <View className="flex-row justify-around  px-2 border-white/50 pt-4  ">
               <View className="flex-col justify-center gap-3 items-center">
-                <TouchableOpacity onPress={navigateToWind} className="flex-row gap-2 pl-3 pr-4 pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
+                <TouchableOpacity
+                  onPress={navigateToWind}
+                  className="flex-row gap-2 pl-3 pr-4 pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
                   <Image
                     source={require('../../assets/icons/wind.png')}
                     className="w-6 h-6"
                   />
                   <Text className="text-white font-semibold text-xl">Wind</Text>
                 </TouchableOpacity>
-                <Text
-                  
-                  className="text-white font-semibold text-2xl">
+                <Text className="text-white font-semibold text-2xl">
                   {current?.wind_kph}{' '}
                   <Text className="text-gray-400">km/h</Text>
                 </Text>
@@ -262,6 +265,67 @@ export default function HomeScreen() {
                 <Text className="text-white font-semibold text-2xl">
                   {current?.pressure_mb}
                   <Text className="text-gray-400"> hpa</Text>
+                </Text>
+              </View>
+            </View>
+            <View className="flex-row justify-around  ">
+              <View className="flex-col justify-center gap-3 items-center">
+                <View className="flex-row gap-2 pl-3 pr-4 pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
+                  <Image
+                    source={require('../../assets/icons/weather.png')}
+                    className="w-6 h-6 invert"
+                  />
+                  <Text className="text-white font-semibold text-xl">
+                    Precipitation
+                  </Text>
+                </View>
+                <Text className="text-white font-semibold text-2xl">
+                  {current?.precip_mm} <Text className="text-gray-400">mm</Text>
+                </Text>
+              </View>
+              <View className="flex-col justify-center gap-3 items-center">
+                <View className="flex-row gap-2 pl-3 pr-4  pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
+                  <Image
+                    source={require('../../assets/icons/precipitation.png')}
+                    className="w-6 h-6"
+                  />
+                  <Text className="text-white font-semibold text-xl">
+                    Rain Probability
+                  </Text>
+                </View>
+                <Text className="text-white font-semibold text-2xl">
+                  {willItRain}
+                  <Text className="text-gray-400">%</Text>
+                </Text>
+              </View>
+            </View>
+            <View className="flex-row justify-around  ">
+              <View className="flex-col justify-center gap-3 items-center">
+                <View className="flex-row gap-2 pl-3 pr-4 pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
+                  <Image
+                    source={require('../../assets/icons/vision.png')}
+                    className="w-6 h-6 invert"
+                  />
+                  <Text className="text-white font-semibold text-xl">
+                    Vision
+                  </Text>
+                </View>
+                <Text className="text-white font-semibold text-2xl">
+                  {currentVision} <Text className="text-gray-400">km</Text>
+                </Text>
+              </View>
+              <View className="flex-col justify-center gap-3 items-center">
+                <View className="flex-row gap-2 pl-3 pr-4  pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
+                  <Image
+                    source={require('../../assets/icons/sunrise.png')}
+                    className="w-6 h-6"
+                  />
+                  <Text className="text-white font-semibold text-xl">
+                    Sunrise
+                  </Text>
+                </View>
+                <Text className="text-white font-semibold text-2xl">
+                  {weather?.forecast?.forecastday[0]?.astro?.sunrise}
                 </Text>
               </View>
             </View>

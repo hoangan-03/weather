@@ -17,23 +17,22 @@ import {theme} from '../../theme';
 import {XMarkIcon} from 'react-native-heroicons/outline';
 const Wind = ({route}) => {
   const [history, setHistory] = useState({});
+  const [currentInterface, setCurrentInterface] = useState(0);
   useEffect(() => {
     fetchMyWeatherData();
   }, []);
 
   const fetchMyWeatherData = async () => {
     let myCity = await getData('city');
-    let cityName = 'Islamabad';
+    let cityName = 'Ha Noi';
 
     if (myCity) {
       cityName = myCity;
     }
 
-    // Get yesterday's date
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
-    // Format the date in 'YYYY-MM-DD' format
     const formattedYesterday = `${yesterday.getFullYear()}-${(
       yesterday.getMonth() + 1
     )
@@ -74,19 +73,29 @@ const Wind = ({route}) => {
   };
   const screenHeight = Dimensions.get('window').height;
 
-  const navigateToWind = () => {
-    // Navigate to the other screen
+  const navigateToHome = () => {
     navigation.navigate('Home');
   };
-  const data = [
+  const unitIndex = [
     {label: 'miles/hour (mi/h)', value: 1},
     {label: 'kilometer/hour (km/h)', value: 2},
   ];
-  const dataa = Array.from({length: 24}, (_, index) => {
-    const hourData = weather?.forecast?.forecastday[0]?.hour[index];
+
+  const [value, setValue] = useState(2);
+  const dailyWindSpeedData = Array.from({length: 24}, (_, index) => {
+    const hourData =
+      weather?.forecast?.forecastday[currentInterface]?.hour[index];
     return hourData[value === 2 ? 'wind_kph' : 'wind_mph'];
   });
-  const [value, setValue] = useState(2);
+  const comparisonData = [
+    value == 2
+      ? weather?.forecast?.forecastday[0]?.day?.maxwind_kph
+      : weather?.forecast?.forecastday[0]?.day?.maxwind_mph,
+    value == 2
+      ? history?.forecast?.forecastday[0]?.day?.maxwind_kph
+      : history?.forecast?.forecastday[0]?.day?.maxwind_mph,
+  ];
+
   const [isFocus, setIsFocus] = useState(false);
   return (
     <ScrollView
@@ -99,7 +108,7 @@ const Wind = ({route}) => {
       <View className="w-full h-full absolute bg-black/50 backdrop-blur-sm"></View>
       <TouchableOpacity
         style={{backgroundColor: theme.bgWhite(0.3)}}
-        onPress={navigateToWind}
+        onPress={navigateToHome}
         className="w-12 h-12 right-4 absolute top-12 rounded-full p-3 m-1 bg-gray-400/50
         ">
         <XMarkIcon size="25" color="white" />
@@ -113,8 +122,39 @@ const Wind = ({route}) => {
       </View>
 
       <View className="w-full flex flex-col gap-7   h-full justify-start items-start pt-24 pl-3 ">
+        <View className="flex-row w-[400] justify-between gap-2 flex p-4">
+          {[...Array(7).keys()].map(index => (
+            <TouchableOpacity
+              key={index}
+              className={`flex flex-col gap-2 justify-center items-center`}
+              onPress={() => setCurrentInterface(index)}>
+              <Text className="text-white uppercase">
+                {new Intl.DateTimeFormat('en-US', {weekday: 'short'}).format(
+                  new Date(weather?.forecast?.forecastday[index]?.date),
+                )}
+              </Text>
+              <View
+                className={`flex justify-center items-center flex-row rounded-full h-8 w-8 ${
+                  currentInterface === index ? 'bg-blue-300' : ''
+                }`}>
+                <Text
+                  className={`text-base h-auto w-auto font-bold ${
+                    currentInterface === index ? 'text-black' : 'text-white'
+                  }`}>
+                  {new Date(weather?.forecast?.forecastday[index]?.date)
+                    .getDate()
+                    .toString()
+                    .padStart(2, '0')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
         <View className="flex flex-col gap-3">
-          <View className="w-auto flex flex-row justify-start pl-4 h-8 text-end items-end">
+          <View
+            className={`w-auto flex flex-row justify-start pl-4 h-8 text-end items-end ${
+              currentInterface == 0 ? 'block' : 'hidden'
+            } `}>
             <Text className="text-white text-4xl font-semibold w-auto text-end h-auto ">
               {value === 2
                 ? weather?.current?.wind_kph
@@ -128,8 +168,10 @@ const Wind = ({route}) => {
           <Text className="text-gray-200 text-xl w-full pl-4 h-8 mb-4">
             Max Wind:{' '}
             {value === 2
-              ? weather?.forecast?.forecastday[0]?.day?.maxwind_kph + ' km/h'
-              : weather?.forecast?.forecastday[0]?.day?.maxwind_mph + ' mph'}
+              ? weather?.forecast?.forecastday[currentInterface]?.day
+                  ?.maxwind_kph + ' km/h'
+              : weather?.forecast?.forecastday[currentInterface]?.day
+                  ?.maxwind_mph + ' mph'}
           </Text>
         </View>
         <LineChart
@@ -137,7 +179,7 @@ const Wind = ({route}) => {
             labels: ['00', '06', '12', '18'],
             datasets: [
               {
-                data: dataa,
+                data: dailyWindSpeedData,
               },
             ],
           }}
@@ -182,12 +224,39 @@ const Wind = ({route}) => {
           <Text className="text-white text-xl w-full font-semibold pl-4 h-auto">
             Summary
           </Text>
-          <View>
+          <View className={`${currentInterface == 0 ? 'block' : 'hidden'}`}>
             <Text className="text-white flex text-base rounded-lg w-[350]  h-auto ml-4 px-4 py-3 bg-gray-600/80">
-              The current wind is {weather?.current?.wind_kph} km/h from the{' '}
-              {mapWindDirection(weather?.current?.wind_dir)}. Today, the wind
-              speed is up to{' '}
-              {weather?.forecast?.forecastday[0]?.day?.maxwind_kph} km/h
+              The current wind is{' '}
+              {value === 2
+                ? weather?.current?.wind_kph + ' km/h'
+                : weather?.current?.wind_mph + ' mph'}{' '}
+              from the {mapWindDirection(weather?.current?.wind_dir)}. Today,
+              the wind speed is up to{' '}
+              {value === 2
+                ? weather?.forecast?.forecastday[0]?.day?.maxwind_kph + ' km/h'
+                : weather?.forecast?.forecastday[0]?.day?.maxwind_mph + ' mph'}
+              , with gusts reaching up to{' '}
+              {value === 2
+                ? weather?.current?.gust_kph + ' km/h'
+                : weather?.current?.gust_mph + ' mph'}
+              {'.'}
+            </Text>
+          </View>
+          <View className={`${currentInterface == 0 ? 'hidden' : 'block'}`}>
+            <Text className="text-white flex text-base rounded-lg w-[350]  h-auto ml-4 px-4 py-3 bg-gray-600/80">
+              On{' '}
+              {new Intl.DateTimeFormat('en-US', {weekday: 'long'}).format(
+                new Date(
+                  weather?.forecast?.forecastday[currentInterface]?.date,
+                ),
+              )}
+              , the the wind speed will up to{' '}
+              {value === 2
+                ? weather?.forecast?.forecastday[currentInterface]?.day
+                    ?.maxwind_kph + ' km/h'
+                : weather?.forecast?.forecastday[currentInterface]?.day
+                    ?.maxwind_mph + ' mph'}
+              .
             </Text>
           </View>
         </View>
@@ -197,10 +266,10 @@ const Wind = ({route}) => {
           </Text>
           <View>
             <Text className="text-white flex text-base rounded-lg w-[350]  h-auto ml-4 px-4 py-3 bg-gray-600/80">
-              The current wind is {weather?.current?.wind_kph} km/h from the{' '}
-              {mapWindDirection(weather?.current?.wind_dir)}. Today, the wind
-              speed is up to{' '}
-              {weather?.forecast?.forecastday[0]?.day?.maxwind_kph} km/h
+              It is a long established fact that a reader will be distracted by
+              the readable content of a page when looking at its layout. The
+              point of using Lorem Ipsum is that it has a more-or-less normal
+              distribution of letters
             </Text>
           </View>
         </View>
@@ -229,10 +298,7 @@ const Wind = ({route}) => {
                   labels: ['Today', 'Yesterday'],
                   datasets: [
                     {
-                      data: [
-                        weather?.forecast?.forecastday[0]?.day?.maxwind_kph,
-                        history?.forecast?.forecastday[0]?.day?.maxwind_kph,
-                      ],
+                      data: comparisonData,
                     },
                   ],
                 }}
@@ -276,9 +342,9 @@ const Wind = ({route}) => {
         </View>
         <View className="flex flex-col gap-2 mb-10">
           <Text className="text-white text-xl w-full font-semibold pl-4 h-auto">
-            How Wind Speed is measured?
+            Preferences
           </Text>
-          <View style={styles.container}>
+          <View style={{paddingLeft: 20, paddingTop: 10}} className="w-[370]">
             <Dropdown
               style={[styles.dropdown]}
               placeholderStyle={styles.placeholderStyle}
@@ -288,13 +354,12 @@ const Wind = ({route}) => {
               itemContainerStyle={styles.itemContainerStyle}
               iconStyle={styles.iconStyle}
               itemTextStyle={styles.itemTextStyle}
-              data={data}
+              data={unitIndex}
               activeColor="#dee9ff"
               maxHeight={300}
               labelField="label"
               valueField="value"
-              alwaysRenderSelectedItem
-              placeholder={!isFocus ? 'Unit' : '...'}
+              placeholder={'Unit'}
               showsVerticalScrollIndicator={false}
               value={value}
               onFocus={() => setIsFocus(true)}
@@ -315,14 +380,9 @@ const Wind = ({route}) => {
 export default Wind;
 
 const styles = StyleSheet.create({
-  container: {
-    paddingLeft: 20,
-    paddingTop: 10,
-  },
   itemContainerStyle: {
     backgroundColor: 'white',
   },
-
   dropdown: {
     height: 50,
     borderColor: 'white',

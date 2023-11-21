@@ -49,51 +49,21 @@ const Humidity = ({route}) => {
 
   const weather = route.params?.prop1;
   const navigation = useNavigation();
-  const mapWindDirection = direction => {
-    const directionMap = {
-      N: 'North',
-      NNE: 'North / North-East',
-      NE: 'North-East',
-      ENE: 'East / North-East',
-      E: 'East',
-      ESE: 'East / South-East',
-      SE: 'South-East',
-      SSE: 'South / South-East',
-      S: 'South',
-      SSW: 'South / South-West',
-      SW: 'South-West',
-      WSW: 'West / South-West',
-      W: 'West',
-      WNW: 'West / North-West',
-      NW: 'North-West',
-      NNW: 'North / North-West',
-    };
 
-    return directionMap[direction] || direction;
-  };
   const screenHeight = Dimensions.get('window').height;
 
   const navigateToHome = () => {
     navigation.navigate('Home');
   };
-  const unitIndex = [
-    {label: 'miles/hour (mi/h)', value: 1},
-    {label: 'kilometer/hour (km/h)', value: 2},
-  ];
 
-  const [value, setValue] = useState(2);
   const dailyHumidity = Array.from({length: 24}, (_, index) => {
     const hourData =
       weather?.forecast?.forecastday[currentInterface]?.hour[index];
     return hourData.humidity;
   });
   const comparisonData = [
-    value == 2
-      ? weather?.forecast?.forecastday[0]?.day?.maxwind_kph
-      : weather?.forecast?.forecastday[0]?.day?.maxwind_mph,
-    value == 2
-      ? history?.forecast?.forecastday[0]?.day?.maxwind_kph
-      : history?.forecast?.forecastday[0]?.day?.maxwind_mph,
+    weather?.forecast?.forecastday[0]?.day?.avghumidity,
+    history?.forecast?.forecastday[0]?.day?.avghumidity,
   ];
 
   const [isFocus, setIsFocus] = useState(false);
@@ -166,14 +136,23 @@ const Humidity = ({route}) => {
               currentInterface == 0 ? 'hidden' : 'block'
             } `}>
             <Text className="text-white text-4xl font-semibold w-auto text-end h-auto ">
-              {weather?.forecast?.forecastday[currentInterface].day?.avghumidity}
+              {
+                weather?.forecast?.forecastday[currentInterface].day
+                  ?.avghumidity
+              }
             </Text>
             <Text className="text-gray-300 text-2xl text-end h-8">{' %'}</Text>
           </View>
-          <Text className={`text-gray-300 text-xl w-full pl-4 h-8  mb-4 ${currentInterface == 0 ? 'hidden' : 'block'}`}>
+          <Text
+            className={`text-gray-300 text-xl w-full pl-4 h-8  mb-4 ${
+              currentInterface == 0 ? 'hidden' : 'block'
+            }`}>
             Average
           </Text>
-          <Text className={`text-gray-300 text-xl w-full pl-4 h-8 mb-4 ${currentInterface == 0 ? 'block' : 'hidden'}`}>
+          <Text
+            className={`text-gray-300 text-xl w-full pl-4 h-8 mb-4 ${
+              currentInterface == 0 ? 'block' : 'hidden'
+            }`}>
             Dew point:{' '}
             {`${weather?.forecast?.forecastday[currentInterface]?.hour[currentHour]?.dewpoint_c} \u00b0C`}
           </Text>
@@ -254,13 +233,21 @@ const Humidity = ({route}) => {
                   weather?.forecast?.forecastday[currentInterface]?.date,
                 ),
               )}
-              , the wind speed will up to{' '}
-              {value === 2
-                ? weather?.forecast?.forecastday[currentInterface]?.day
-                    ?.maxwind_kph + ' km/h'
-                : weather?.forecast?.forecastday[currentInterface]?.day
-                    ?.maxwind_mph + ' mph'}
-              .
+              , the average humidity is{' '}
+              {
+                weather?.forecast?.forecastday[currentInterface]?.day
+                  ?.avghumidity
+              }{' '}
+              %. The dew point fluctuates from{' '}
+              {`${Math.min(
+                ...(weather?.forecast?.forecastday[currentInterface]?.hour.map(
+                  hour => hour?.dewpoint_c || 0,
+                ) || []),
+              )}\u00b0C to ${Math.max(
+                ...(weather?.forecast?.forecastday[currentInterface]?.hour.map(
+                  hour => hour?.dewpoint_c || 0,
+                ) || []),
+              )}\u00b0C throughout the day.`}
             </Text>
           </View>
         </View>
@@ -288,9 +275,9 @@ const Humidity = ({route}) => {
           <View>
             <View className="flex  rounded-lg w-[350] gap-2 flex-col  h-[200] ml-4 px-4 py-3 bg-gray-600/80">
               <Text className="text-white text-base">
-                The Max Wind of today is{' '}
-                {weather?.forecast?.forecastday[0]?.day?.maxwind_kph >
-                history?.forecast?.forecastday[0]?.day?.maxwind_kph
+                The average humidity of today is{' '}
+                {weather?.forecast?.forecastday[0]?.day?.avghumidity >
+                history?.forecast?.forecastday[0]?.day?.avghumidity
                   ? 'higher'
                   : 'lower'}{' '}
                 than that of yesterday.
@@ -337,47 +324,15 @@ const Humidity = ({route}) => {
         </View>
         <View className="flex flex-col gap-2 mb-10">
           <Text className="text-white text-xl w-full font-semibold pl-4 h-auto">
-            How Wind Speed is measured?
+            About relative humidity
           </Text>
           <View>
             <Text className="text-white flex text-base rounded-lg w-[350] text-justify h-auto ml-4 px-4 py-3 bg-gray-600/80">
-              Wind speed is measured using a cup anemometer with three or four
-              cups arranged symmetrically. The rotation of the cups is
-              proportional to the wind speed in standard instruments, ensuring
-              an accurate approximation.
+              Relative humidity is the ratio of how much water vapour is in the
+              air to how much water vapour the air could potentially contain at
+              a given temperature. It varies with the temperature of the air:
+              colder air can hold less vapour.
             </Text>
-          </View>
-        </View>
-        <View className="flex flex-col gap-2 mb-10">
-          <Text className="text-white text-xl w-full font-semibold pl-4 h-auto">
-            Preferences
-          </Text>
-          <View style={{paddingLeft: 20, paddingTop: 10}} className="w-[370]">
-            <Dropdown
-              style={[styles.dropdown]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedStyle={styles.selectedTextStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              itemContainerStyle={styles.itemContainerStyle}
-              iconStyle={styles.iconStyle}
-              itemTextStyle={styles.itemTextStyle}
-              data={unitIndex}
-              activeColor="#dee9ff"
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={'Unit'}
-              showsVerticalScrollIndicator={false}
-              value={value}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
-              onChange={item => {
-                setValue(item.value);
-                setIsFocus(false);
-              }}
-              dropdownPosition="top"
-            />
           </View>
         </View>
       </View>
@@ -386,44 +341,3 @@ const Humidity = ({route}) => {
 };
 
 export default Humidity;
-
-const styles = StyleSheet.create({
-  itemContainerStyle: {
-    backgroundColor: 'white',
-  },
-  dropdown: {
-    height: 50,
-    borderColor: 'white',
-    borderWidth: 2,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    backgroundColor: 'rgba(74, 85, 104, 0.8)',
-  },
-  icon: {
-    marginRight: 5,
-  },
-  label: {
-    position: 'absolute',
-
-    left: 22,
-    top: 8,
-    zIndex: 999,
-    paddingHorizontal: 8,
-    fontSize: 14,
-  },
-  placeholderStyle: {
-    fontSize: 16,
-    color: 'white',
-  },
-  selectedTextStyle: {
-    fontSize: 16,
-    color: 'white',
-  },
-  itemTextStyle: {
-    fontSize: 14,
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
-  },
-});

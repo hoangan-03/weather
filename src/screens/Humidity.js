@@ -15,7 +15,7 @@ import {
 import {fetchHistory} from '../../api/weather';
 import {theme} from '../../theme';
 import {XMarkIcon} from 'react-native-heroicons/outline';
-const Wind = ({route}) => {
+const Humidity = ({route}) => {
   const [history, setHistory] = useState({});
   const [currentInterface, setCurrentInterface] = useState(0);
   useEffect(() => {
@@ -82,10 +82,10 @@ const Wind = ({route}) => {
   ];
 
   const [value, setValue] = useState(2);
-  const dailyWindSpeedData = Array.from({length: 24}, (_, index) => {
+  const dailyHumidity = Array.from({length: 24}, (_, index) => {
     const hourData =
       weather?.forecast?.forecastday[currentInterface]?.hour[index];
-    return hourData[value === 2 ? 'wind_kph' : 'wind_mph'];
+    return hourData.humidity;
   });
   const comparisonData = [
     value == 2
@@ -97,6 +97,7 @@ const Wind = ({route}) => {
   ];
 
   const [isFocus, setIsFocus] = useState(false);
+  const currentHour = new Date().getHours();
   return (
     <ScrollView
       style={[{height: screenHeight}]}
@@ -115,10 +116,10 @@ const Wind = ({route}) => {
       </TouchableOpacity>
       <View className="text-gray-200 flex flex-row self-center absolute items-center justify-center top-16 text-xl w-auto h-auto gap-2">
         <Image
-          source={require('../../assets/icons/wind.png')}
+          source={require('../../assets/icons/drop.png')}
           className="w-6 h-6"
         />
-        <Text className="text-white font-semibold text-xl ">Wind</Text>
+        <Text className="text-white font-semibold text-xl ">Humidity</Text>
       </View>
 
       <View className="w-full flex flex-col gap-7   h-full justify-start items-start pt-24 pl-3 ">
@@ -156,22 +157,25 @@ const Wind = ({route}) => {
               currentInterface == 0 ? 'block' : 'hidden'
             } `}>
             <Text className="text-white text-4xl font-semibold w-auto text-end h-auto ">
-              {value === 2
-                ? weather?.current?.wind_kph
-                : weather?.current?.wind_mph}
+              {weather?.current?.humidity}
             </Text>
-            <Text className="text-gray-300 text-xl text-end h-8">
-              {' '}
-              {value == 2 ? 'km/h' : 'mph'}{' '}
-            </Text>
+            <Text className="text-gray-300 text-2xl text-end h-8">{' %'}</Text>
           </View>
-          <Text className="text-gray-200 text-xl w-full pl-4 h-8 mb-4">
-            Max Wind:{' '}
-            {value === 2
-              ? weather?.forecast?.forecastday[currentInterface]?.day
-                  ?.maxwind_kph + ' km/h'
-              : weather?.forecast?.forecastday[currentInterface]?.day
-                  ?.maxwind_mph + ' mph'}
+          <View
+            className={`w-auto flex flex-row justify-start pl-4 h-8 text-end items-end ${
+              currentInterface == 0 ? 'hidden' : 'block'
+            } `}>
+            <Text className="text-white text-4xl font-semibold w-auto text-end h-auto ">
+              {weather?.forecast?.forecastday[currentInterface].day?.avghumidity}
+            </Text>
+            <Text className="text-gray-300 text-2xl text-end h-8">{' %'}</Text>
+          </View>
+          <Text className={`text-gray-300 text-xl w-full pl-4 h-8  mb-4 ${currentInterface == 0 ? 'hidden' : 'block'}`}>
+            Average
+          </Text>
+          <Text className={`text-gray-300 text-xl w-full pl-4 h-8 mb-4 ${currentInterface == 0 ? 'block' : 'hidden'}`}>
+            Dew point:{' '}
+            {`${weather?.forecast?.forecastday[currentInterface]?.hour[currentHour]?.dewpoint_c} \u00b0C`}
           </Text>
         </View>
         <LineChart
@@ -179,7 +183,7 @@ const Wind = ({route}) => {
             labels: ['00', '06', '12', '18'],
             datasets: [
               {
-                data: dailyWindSpeedData,
+                data: dailyHumidity,
               },
             ],
           }}
@@ -189,6 +193,7 @@ const Wind = ({route}) => {
           fromZero={true}
           withDots={false}
           segments={6}
+          yAxisSuffix={' %'}
           yAxisInterval={1}
           chartConfig={{
             backgroundGradientFromOpacity: 0,
@@ -226,20 +231,19 @@ const Wind = ({route}) => {
           </Text>
           <View className={`${currentInterface == 0 ? 'block' : 'hidden'}`}>
             <Text className="text-white flex text-base rounded-lg w-[350]  h-auto ml-4 px-4 py-3 bg-gray-600/80">
-              The current wind is{' '}
-              {value === 2
-                ? weather?.current?.wind_kph + ' km/h'
-                : weather?.current?.wind_mph + ' mph'}{' '}
-              from the {mapWindDirection(weather?.current?.wind_dir)}. Today,
-              the wind speed is up to{' '}
-              {value === 2
-                ? weather?.forecast?.forecastday[0]?.day?.maxwind_kph + ' km/h'
-                : weather?.forecast?.forecastday[0]?.day?.maxwind_mph + ' mph'}
-              , with gusts reaching up to{' '}
-              {value === 2
-                ? weather?.current?.gust_kph + ' km/h'
-                : weather?.current?.gust_mph + ' mph'}
-              {'.'}
+              The current humidity is {weather?.current?.humidity} %. Today the
+              average humidity is{' '}
+              {weather?.forecast?.forecastday[0]?.day?.avghumidity} %. The dew
+              point fluctuates from{' '}
+              {`${Math.min(
+                ...(weather?.forecast?.forecastday[0]?.hour.map(
+                  hour => hour?.dewpoint_c || 0,
+                ) || []),
+              )}\u00b0C to ${Math.max(
+                ...(weather?.forecast?.forecastday[0]?.hour.map(
+                  hour => hour?.dewpoint_c || 0,
+                ) || []),
+              )}\u00b0C throughout the day.`}
             </Text>
           </View>
           <View className={`${currentInterface == 0 ? 'hidden' : 'block'}`}>
@@ -273,8 +277,12 @@ const Wind = ({route}) => {
             </Text>
           </View>
         </View>
-        <View className={`flex flex-col gap-2 ${currentInterface == 0 ? 'block' : 'hidden'}`}>
-          <Text className={`text-white text-xl w-full font-semibold pl-4 h-auto `}>
+        <View
+          className={`flex flex-col gap-2 ${
+            currentInterface == 0 ? 'block' : 'hidden'
+          }`}>
+          <Text
+            className={`text-white text-xl w-full font-semibold pl-4 h-auto `}>
             Comparison
           </Text>
           <View>
@@ -377,7 +385,7 @@ const Wind = ({route}) => {
   );
 };
 
-export default Wind;
+export default Humidity;
 
 const styles = StyleSheet.create({
   itemContainerStyle: {

@@ -37,6 +37,12 @@ export default function HomeScreen() {
       prop1: weather,
     });
   };
+  const navigateToHumidity = () => {
+    // Navigate to the other screen
+    navigation.navigate('Humidity', {
+      prop1: weather,
+    });
+  };
 
   const handleSearch = search => {
     // console.log('value: ',search);
@@ -223,7 +229,9 @@ export default function HomeScreen() {
                 </Text>
               </View>
               <View className="flex-col justify-center gap-3 items-center">
-                <View className="flex-row gap-2 pl-3 pr-4  pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
+                <TouchableOpacity
+                onPress={navigateToHumidity} 
+                className="flex-row gap-2 pl-3 pr-4  pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
                   <Image
                     source={require('../../assets/icons/drop.png')}
                     className="w-6 h-6"
@@ -231,7 +239,7 @@ export default function HomeScreen() {
                   <Text className="text-white font-semibold text-xl">
                     Humidity
                   </Text>
-                </View>
+                </TouchableOpacity>
                 <Text className="text-white font-semibold text-2xl">
                   {current?.humidity} <Text className="text-gray-400">%</Text>
                 </Text>

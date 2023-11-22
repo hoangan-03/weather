@@ -171,8 +171,9 @@ const Uv = ({route}) => {
   };
   const DefinitionTitle = {
     Wind: 'How Wind Speed is measured?',
-    Humidity: 'About relative humidity',
+    Humidity: 'About relative Humidity',
     'Uv Index': 'About UV Index',
+    Pressure: 'About Pressure'
   };
   const Definition = {
     'Uv Index':
@@ -180,7 +181,9 @@ const Uv = ({route}) => {
     Wind: 'Wind speed is measured using a cup anemometer with three or four cups arranged symmetrically. The rotation of the cups is proportional to the wind speed in standard instruments, ensuring an accurate approximation.',
     Humidity:
       'Relative humidity is the ratio of how much water vapour is in the air to how much water vapour the air could potentially contain at a given temperature. It varies with the temperature of the air: colder air can hold less vapour.',
-  };
+    Pressure:
+    'Pressure refers to atmospheric pressure, which is the force per unit area exerted on a surface by the weight of the air above that surface in the atmosphere of Earth (or another celestial body). High atmospheric pressure generally indicates clear and settled weather, while low pressure often indicates unsettled or stormy weather. Changes in atmospheric pressure are closely monitored in weather forecasting, and they play a crucial role in understanding and predicting weather patterns.'
+    };
 
   return (
     <ScrollView

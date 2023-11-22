@@ -19,6 +19,7 @@ export default function AppNavigation() {
       <Stack.Screen name="Wind" options={{headerShown: false}} component={Wind} />
       <Stack.Screen name="Humidity" options={{headerShown: false}} component={Wind} />
       <Stack.Screen name="Uv Index" options={{headerShown: false}} component={Wind} />
+      <Stack.Screen name="Pressure" options={{headerShown: false}} component={Wind} />
       </Stack.Navigator>
     </NavigationContainer>
   )

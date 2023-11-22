@@ -21,26 +21,30 @@ export const weatherImages = {
 export const weatherIcon = {
     "Humidity": require('../assets/icons/drop.png'),
     "Uv Index": require("../assets/icons/rays.png"),
-    "Wind": require('../assets/icons/wind.png')
+    "Wind": require('../assets/icons/wind.png'),
+    "Pressure": require('../assets/icons/gauge.png')
 }
 export const weatherEndpoint = {
     "Humidity": "humidity",
     "Uv Index": "uv",
     "Wind": "wind_kph",
+    "Pressure": "pressure_mb",
 }
 export const weatherUnit = {
     "Humidity": "%",
     "Uv Index": "",
     "Wind": "km/h",
+    "Pressure": "hpa"
 }
 export const subName = {
     "humidity": "avghumidity",
     "uv": "uv",
-    "wind_kph": "maxwind_kph"
+    "wind_kph": "maxwind_kph",
+    "Pressure": ""
 }
 export const comparisonName = {
     "Humidity": "average humidity",
-    "Uv Index": "highest UV Index",
+    "Uv Index": "average UV Index",
     "Wind": "max wind speed"
 }
 export const mapWindDirection = direction => {

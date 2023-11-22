@@ -72,14 +72,42 @@ const Uv = ({route}) => {
   const currentHour = new Date().getHours();
   const additionalEle = {
     Humidity: `Dew point: ${weather?.forecast?.forecastday[currentInterface]?.hour[currentHour]?.dewpoint_c}°C`,
-    'Uv Index': 'UVI World Health Organization',
+    'Uv Index': 'Current UVI World Health Organization',
     Wind: `Max Wind: ${weather?.forecast?.forecastday[currentInterface]?.day?.maxwind_kph} km/h`,
+    Pressure: 'Average',
   };
   const forecastadditionalEle = {
     Humidity: `Average`,
-    'Uv Index': 'UVI World Health Organization',
+    'Uv Index': 'Average UVI World Health Organization',
     Wind: `Max Wind: ${weather?.forecast?.forecastday[currentInterface]?.day?.maxwind_kph} km/h`,
+    Pressure: 'Average',
   };
+  const maxUV = Math.max(
+    ...(weather?.forecast?.forecastday[currentInterface]?.hour.map(
+      hour => hour?.uv || 0,
+    ) || []),
+  );
+  const averagePressure =
+    Math.round(
+      weather?.forecast?.forecastday[currentInterface]?.hour.reduce(
+        (sum, hour) => sum + (hour?.pressure_mb || 0),
+        0,
+      ) / weather?.forecast?.forecastday[currentInterface]?.hour.length,
+    ) || 0;
+
+  let uvIndexLevel;
+  if (maxUV >= 0 && maxUV <= 2) {
+    uvIndexLevel = 'Low';
+  } else if (maxUV >= 3 && maxUV <= 5) {
+    uvIndexLevel = 'Medium';
+  } else if (maxUV >= 6 && maxUV <= 7) {
+    uvIndexLevel = 'High';
+  } else if (maxUV >= 8 && maxUV <= 10) {
+    uvIndexLevel = 'Very High';
+  } else {
+    uvIndexLevel = 'Extreme';
+  }
+
   const summary = {
     Humidity: `The current humidity is ${
       weather?.current?.humidity
@@ -101,6 +129,15 @@ const Uv = ({route}) => {
     )}. Today, the wind speed is up to ${
       weather?.forecast?.forecastday[0]?.day?.maxwind_kph
     } km/h, with gusts reaching up to ${weather?.current?.gust_kph} km/h`,
+    'Uv Index': `Currently, The UV Index is ${
+      weather?.current?.uv
+    }. Today, the highest UV Index is ${maxUV}, considered ${uvIndexLevel} in WHO UV Index. ${
+      uvIndexLevel == 'High' ||
+      uvIndexLevel == 'Very High' ||
+      uvIndexLevel == 'Extreme'
+        ? 'It is advisable to employ sun protection measures.'
+        : ''
+    }`,
   };
   const forecastSummary = {
     Humidity: `On ${new Intl.DateTimeFormat('en-US', {weekday: 'long'}).format(
@@ -121,12 +158,26 @@ const Uv = ({route}) => {
     )}, the wind speed will be up to ${
       weather?.forecast?.forecastday[currentInterface]?.day?.maxwind_kph
     } km/h.`,
+    'Uv Index': `On ${new Intl.DateTimeFormat('en-US', {
+      weekday: 'long',
+    }).format(
+      new Date(weather?.forecast?.forecastday[currentInterface]?.date),
+    )}, the highest UV Index is ${maxUV}, considered ${uvIndexLevel} in WHO UV Index. ${
+      uvIndexLevel == 'High' ||
+      uvIndexLevel == 'Very High' ||
+      uvIndexLevel == 'Extreme'
+        ? 'It is advisable to employ sun protection measures.'
+        : ''
+    }`,
   };
   const DefinitionTitle = {
     Wind: 'How Wind Speed is measured?',
     Humidity: 'About relative humidity',
+    'Uv Index': 'About UV Index',
   };
   const Definition = {
+    'Uv Index':
+      'The UV index, is an international standard measurement of the strength of the sunburn-producing ultraviolet (UV) radiation at a particular place and time. It is primarily used in daily and hourly forecasts aimed at the general public. The UV index is designed as an open-ended linear scale, directly proportional to the intensity of UV radiation, and adjusting for wavelength based on what causes human skin to sunburn. The purpose of the UV index is to help people effectively protect themselves from UV radiation.',
     Wind: 'Wind speed is measured using a cup anemometer with three or four cups arranged symmetrically. The rotation of the cups is proportional to the wind speed in standard instruments, ensuring an accurate approximation.',
     Humidity:
       'Relative humidity is the ratio of how much water vapour is in the air to how much water vapour the air could potentially contain at a given temperature. It varies with the temperature of the air: colder air can hold less vapour.',
@@ -198,13 +249,14 @@ const Uv = ({route}) => {
             className={`w-auto flex flex-row justify-start pl-4 h-8 text-end items-end ${
               currentInterface == 0 || name == 'Wind' ? 'hidden' : 'block'
             } `}>
-            <Text className="text-white text-4xl font-semibold w-auto text-end h-auto ">
-              {
-                weather?.forecast?.forecastday[currentInterface].day?.[
-                  subName[modifiedEndPoint]
-                ]
-              }
+            <Text className="text-white text-4xl font-semibold w-auto text-end h-auto">
+              {name === 'Pressure'
+                ? averagePressure
+                : weather?.forecast?.forecastday[currentInterface]?.day?.[
+                    subName[modifiedEndPoint]
+                  ]}
             </Text>
+
             <Text className="text-gray-300 text-2xl text-end h-8">
               {weatherUnit[name]}
             </Text>
@@ -284,22 +336,10 @@ const Uv = ({route}) => {
             </Text>
           </View>
         </View>
-        <View className="flex flex-col gap-2">
-          <Text className="text-white text-xl w-full font-semibold pl-4 h-auto">
-            Map
-          </Text>
-          <View>
-            <Text className="text-white flex text-base rounded-lg w-[350]  h-auto ml-4 px-4 py-3 bg-gray-600/80">
-              It is a long established fact that a reader will be distracted by
-              the readable content of a page when looking at its layout. The
-              point of using Lorem Ipsum is that it has a more-or-less normal
-              distribution of letters
-            </Text>
-          </View>
-        </View>
+
         <View
           className={`flex flex-col gap-2 ${
-            currentInterface == 0 ? 'block' : 'hidden'
+            currentInterface == 0 && name != 'Pressure' ? 'block' : 'hidden'
           }`}>
           <Text
             className={`text-white text-xl w-full font-semibold pl-4 h-auto `}>

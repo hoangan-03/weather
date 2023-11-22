@@ -1,5 +1,4 @@
-import {Dimensions, StyleSheet} from 'react-native';
-import {Dropdown} from 'react-native-element-dropdown';
+import {Dimensions} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {View, Text, Image, TouchableOpacity, ScrollView} from 'react-native';

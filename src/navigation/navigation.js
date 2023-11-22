@@ -2,7 +2,7 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen.js';
-import Wind from '../screens/Wind.js';
+import Elements from '../screens/elements.js';
 import { LogBox } from 'react-native';
 
 const Stack = createNativeStackNavigator();
@@ -16,10 +16,10 @@ export default function AppNavigation() {
     <NavigationContainer>
       <Stack.Navigator>
       <Stack.Screen name="Home" options={{headerShown: false}} component={HomeScreen} />
-      <Stack.Screen name="Wind" options={{headerShown: false}} component={Wind} />
-      <Stack.Screen name="Humidity" options={{headerShown: false}} component={Wind} />
-      <Stack.Screen name="Uv Index" options={{headerShown: false}} component={Wind} />
-      <Stack.Screen name="Pressure" options={{headerShown: false}} component={Wind} />
+      <Stack.Screen name="Wind" options={{headerShown: false}} component={Elements} />
+      <Stack.Screen name="Humidity" options={{headerShown: false}} component={Elements} />
+      <Stack.Screen name="Uv Index" options={{headerShown: false}} component={Elements} />
+      <Stack.Screen name="Pressure" options={{headerShown: false}} component={Elements} />
       </Stack.Navigator>
     </NavigationContainer>
   )

@@ -18,3 +18,50 @@ export const weatherImages = {
     'Mist': require('../assets/images/mist.png'),
     'other': require('../assets/images/moderaterain.png')
 }
+export const weatherIcon = {
+    "Humidity": require('../assets/icons/drop.png'),
+    "Uv Index": require("../assets/icons/rays.png"),
+    "Wind": require('../assets/icons/wind.png')
+}
+export const weatherEndpoint = {
+    "Humidity": "humidity",
+    "Uv Index": "uv",
+    "Wind": "wind_kph",
+}
+export const weatherUnit = {
+    "Humidity": "%",
+    "Uv Index": "",
+    "Wind": "km/h",
+}
+export const subName = {
+    "humidity": "avghumidity",
+    "uv": "uv",
+    "wind_kph": "maxwind_kph"
+}
+export const comparisonName = {
+    "Humidity": "average humidity",
+    "Uv Index": "highest UV Index",
+    "Wind": "max wind speed"
+}
+export const mapWindDirection = direction => {
+    const directionMap = {
+      N: 'North',
+      NNE: 'North / North-East',
+      NE: 'North-East',
+      ENE: 'East / North-East',
+      E: 'East',
+      ESE: 'East / South-East',
+      SE: 'South-East',
+      SSE: 'South / South-East',
+      S: 'South',
+      SSW: 'South / South-West',
+      SW: 'South-West',
+      WSW: 'West / South-West',
+      W: 'West',
+      WNW: 'West / North-West',
+      NW: 'North-West',
+      NNW: 'North / North-West',
+    };
+
+    return directionMap[direction] || direction;
+  };

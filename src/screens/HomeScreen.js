@@ -27,22 +27,18 @@ export default function HomeScreen() {
   const [weather, setWeather] = useState({});
 
   const navigation = useNavigation();
-  const navigateToOtherScreen = () => {
-    // Navigate to the other screen
-    navigation.navigate('Info');
-  };
-  const navigateToWind = () => {
-    // Navigate to the other screen
-    navigation.navigate('Wind', {
+
+  const navigateToScreen = screenName => {
+    // Navigate to the specified screen
+    navigation.navigate(screenName, {
       prop1: weather,
     });
   };
-  const navigateToHumidity = () => {
-    // Navigate to the other screen
-    navigation.navigate('Humidity', {
-      prop1: weather,
-    });
-  };
+
+  // Usage example
+  const navigateToWind = () => navigateToScreen('Wind');
+  const navigateToHumidity = () => navigateToScreen('Humidity');
+  const navigateToUv = () => navigateToScreen('Uv Index');
 
   const handleSearch = search => {
     // console.log('value: ',search);
@@ -230,8 +226,8 @@ export default function HomeScreen() {
               </View>
               <View className="flex-col justify-center gap-3 items-center">
                 <TouchableOpacity
-                onPress={navigateToHumidity} 
-                className="flex-row gap-2 pl-3 pr-4  pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
+                  onPress={navigateToHumidity}
+                  className="flex-row gap-2 pl-3 pr-4  pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
                   <Image
                     source={require('../../assets/icons/drop.png')}
                     className="w-6 h-6"
@@ -247,7 +243,9 @@ export default function HomeScreen() {
             </View>
             <View className="flex-row justify-around  ">
               <View className="flex-col justify-center gap-3 items-center">
-                <View className="flex-row gap-2 pl-3 pr-4 pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
+                <TouchableOpacity
+                  onPress={navigateToUv}
+                  className="flex-row gap-2 pl-3 pr-4 pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
                   <Image
                     source={require('../../assets/icons/rays.png')}
                     className="w-6 h-6 invert"
@@ -255,7 +253,7 @@ export default function HomeScreen() {
                   <Text className="text-white font-semibold text-xl">
                     UV Index
                   </Text>
-                </View>
+                </TouchableOpacity>
                 <Text className="text-white font-semibold text-2xl">
                   {current?.uv}
                 </Text>

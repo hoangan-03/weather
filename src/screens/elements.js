@@ -105,12 +105,14 @@ const Uv = ({route}) => {
     'Uv Index': 'Current UVI World Health Organization',
     Wind: `Max Wind: ${weather?.forecast?.forecastday[currentInterface]?.day?.maxwind_kph} km/h`,
     Pressure: 'Average',
+    Precipitation: 'Daily Total',
   };
   const forecastadditionalEle = {
     Humidity: `Average`,
     'Uv Index': 'Average UVI World Health Organization',
     Wind: `Max Wind: ${weather?.forecast?.forecastday[currentInterface]?.day?.maxwind_kph} km/h`,
     Pressure: 'Average',
+    Precipitation: 'Daily Total',
   };
   const maxUV = Math.max(
     ...(weather?.forecast?.forecastday[currentInterface]?.hour.map(
@@ -168,6 +170,7 @@ const Uv = ({route}) => {
         ? 'It is advisable to employ sun protection measures.'
         : ''
     }`,
+    Precipitation: `It has been precipitation of ${weather?.forecast?.forecastday[0]?.day?.totalprecip_mm}mm in last 24 hours.`,
   };
   const forecastSummary = {
     Humidity: `On ${new Intl.DateTimeFormat('en-US', {weekday: 'long'}).format(
@@ -199,12 +202,16 @@ const Uv = ({route}) => {
         ? 'It is advisable to employ sun protection measures.'
         : ''
     }`,
+    Precipitation: `On ${new Intl.DateTimeFormat('en-US', {weekday: 'long'}).format(
+      new Date(weather?.forecast?.forecastday[currentInterface]?.date),
+    )}, total precipitation will be ${weather?.forecast?.forecastday[currentInterface]?.day?.totalprecip_mm}mm.`,
   };
   const DefinitionTitle = {
     Wind: 'How Wind Speed is measured?',
     Humidity: 'About relative Humidity',
     'Uv Index': 'About UV Index',
     Pressure: 'About Pressure',
+    Precipitation: 'About Precipitation'
   };
   const Definition = {
     'Uv Index':
@@ -214,7 +221,10 @@ const Uv = ({route}) => {
       'Relative humidity is the ratio of how much water vapour is in the air to how much water vapour the air could potentially contain at a given temperature. It varies with the temperature of the air: colder air can hold less vapour.',
     Pressure:
       'Pressure refers to atmospheric pressure, which is the force per unit area exerted on a surface by the weight of the air above that surface in the atmosphere of Earth (or another celestial body). High atmospheric pressure generally indicates clear and settled weather, while low pressure often indicates unsettled or stormy weather. Changes in atmospheric pressure are closely monitored in weather forecasting, and they play a crucial role in understanding and predicting weather patterns.',
-  };
+    Precipitation:
+    '',
+    };
+
   const menuItems = [
     {
       name: 'Wind',

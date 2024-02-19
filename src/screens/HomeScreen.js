@@ -40,6 +40,7 @@ export default function HomeScreen() {
   const navigateToHumidity = () => navigateToScreen('Humidity');
   const navigateToUv = () => navigateToScreen('Uv Index');
   const navigateToPressure = () => navigateToScreen('Pressure');
+  const navigateToPrecipitation = () => navigateToScreen('Precipitation');
 
   const handleSearch = search => {
     // console.log('value: ',search);
@@ -279,7 +280,8 @@ export default function HomeScreen() {
             </View>
             <View className="flex-row justify-around  ">
               <View className="flex-col justify-center gap-3 items-center">
-                <View className="flex-row gap-2 pl-3 pr-4 pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
+                <TouchableOpacity 
+                onPress={navigateToPrecipitation} className="flex-row gap-2 pl-3 pr-4 pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
                   <Image
                     source={require('../../assets/icons/weather.png')}
                     className="w-6 h-6 invert"
@@ -287,7 +289,7 @@ export default function HomeScreen() {
                   <Text className="text-white font-semibold text-xl">
                     Precipitation
                   </Text>
-                </View>
+                </TouchableOpacity>
                 <Text className="text-white font-semibold text-2xl">
                   {current?.precip_mm} <Text className="text-gray-400">mm</Text>
                 </Text>

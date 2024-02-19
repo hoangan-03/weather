@@ -20,6 +20,7 @@ export default function AppNavigation() {
       <Stack.Screen name="Humidity" options={{headerShown: false}} component={Elements} />
       <Stack.Screen name="Uv Index" options={{headerShown: false}} component={Elements} />
       <Stack.Screen name="Pressure" options={{headerShown: false}} component={Elements} />
+      <Stack.Screen name="Precipitation" options={{headerShown: false}} component={Elements} />
       </Stack.Navigator>
     </NavigationContainer>
   )

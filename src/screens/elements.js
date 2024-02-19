@@ -13,11 +13,43 @@ import {LineChart, BarChart} from 'react-native-chart-kit';
 import {fetchHistory} from '../../api/weather';
 import {theme} from '../../theme';
 import {XMarkIcon} from 'react-native-heroicons/outline';
+import {ChevronDownIcon} from 'react-native-heroicons/outline';
+import {CheckIcon} from 'react-native-heroicons/solid';
+const MenuItem = ({ name, iconName, onPress, isSelected }) => (
+  <TouchableOpacity
+    className="w-full h-auto justify-between text-center hover:bg-gray-800 gap-4 flex flex-row pr-1 pl-3 py-2 items-center"
+    onPress={onPress}>
+    <TouchableOpacity className="flex flex-row justify-center items-center">
+      <View className={`${isSelected ? 'block' : 'hidden'} w-auto h-auto`}>
+        <CheckIcon color="white" size={25} />
+      </View>
+      <TouchableOpacity>
+        <Text className="text-white text-xl ml-2">{name}</Text>
+      </TouchableOpacity>
+    </TouchableOpacity>
+    <Image source={weatherIcon[iconName]} className="w-5 h-5" />
+  </TouchableOpacity>
+);
 const Uv = ({route}) => {
+  const [currentInterface, setCurrentInterface] = useState(0);
+  const navigation = useNavigation();
+  const navigateToScreen = (screenName, index) => {
+    navigation.navigate(screenName, {
+      prop1: weather,
+    });
+    setCurrentInterface(index);
+  };
+
+  const navigateToWind = indexx => navigateToScreen('Wind', indexx);
+  const navigateToHumidity = indexx => navigateToScreen('Humidity', indexx);
+  const navigateToUv = indexx => navigateToScreen('Uv Index', indexx);
+  const navigateToPressure = indexx => navigateToScreen('Pressure', indexx);
+  const [openMenu, setOpenMenu] = useState(false);
+
   const weather = route.params?.prop1;
   const screenHeight = Dimensions.get('window').height;
   const [history, setHistory] = useState({});
-  const [currentInterface, setCurrentInterface] = useState(0);
+
   useEffect(() => {
     fetchMyWeatherData();
   }, []);
@@ -50,7 +82,6 @@ const Uv = ({route}) => {
   const name = route.name;
   const modifiedEndPoint = `${weatherEndpoint[name]}`;
 
-  const navigation = useNavigation();
   const navigateToHome = () => {
     navigation.navigate('Home');
   };
@@ -173,7 +204,7 @@ const Uv = ({route}) => {
     Wind: 'How Wind Speed is measured?',
     Humidity: 'About relative Humidity',
     'Uv Index': 'About UV Index',
-    Pressure: 'About Pressure'
+    Pressure: 'About Pressure',
   };
   const Definition = {
     'Uv Index':
@@ -182,8 +213,34 @@ const Uv = ({route}) => {
     Humidity:
       'Relative humidity is the ratio of how much water vapour is in the air to how much water vapour the air could potentially contain at a given temperature. It varies with the temperature of the air: colder air can hold less vapour.',
     Pressure:
-    'Pressure refers to atmospheric pressure, which is the force per unit area exerted on a surface by the weight of the air above that surface in the atmosphere of Earth (or another celestial body). High atmospheric pressure generally indicates clear and settled weather, while low pressure often indicates unsettled or stormy weather. Changes in atmospheric pressure are closely monitored in weather forecasting, and they play a crucial role in understanding and predicting weather patterns.'
-    };
+      'Pressure refers to atmospheric pressure, which is the force per unit area exerted on a surface by the weight of the air above that surface in the atmosphere of Earth (or another celestial body). High atmospheric pressure generally indicates clear and settled weather, while low pressure often indicates unsettled or stormy weather. Changes in atmospheric pressure are closely monitored in weather forecasting, and they play a crucial role in understanding and predicting weather patterns.',
+  };
+  const menuItems = [
+    {
+      name: 'Wind',
+      iconName: 'Wind',
+      onPress: () => navigateToWind(currentInterface),
+      isSelected: name === 'Wind',
+    },
+    {
+      name: 'Humidity',
+      iconName: 'Humidity',
+      onPress: () => navigateToHumidity(currentInterface),
+      isSelected: name === 'Humidity',
+    },
+    {
+      name: 'UV Index',
+      iconName: 'Uv Index',
+      onPress: () => navigateToUv(currentInterface),
+      isSelected: name === 'Uv Index',
+    },
+    {
+      name: 'Pressure',
+      iconName: 'Pressure',
+      onPress: () => navigateToPressure(currentInterface),
+      isSelected: name === 'Pressure',
+    },
+  ];
 
   return (
     <ScrollView
@@ -194,6 +251,28 @@ const Uv = ({route}) => {
         className="absolute w-full h-full  object-cover "
       />
       <View className="w-full h-full absolute bg-black/50 backdrop-blur-sm"></View>
+      <TouchableOpacity className="w-[70px] mr-4 h-auto gap-2 absolute top-[240px] right-[10px] z-[1000]">
+        <TouchableOpacity
+          className={`w-[70px]  h-[30px] bg-gray-500 rounded-[15px] gap-2 flex flex-row justify-center`}
+          onPress={() => setOpenMenu(!openMenu)}>
+          <Image source={weatherIcon[route.name]} className="w-4 h-4" />
+          <ChevronDownIcon size="20" color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          className={`flex w-[200px] absolute right-0 top-10 rounded-xl bg-gray-800 h-[400px] flex-col ${
+            openMenu ? 'block' : 'hidden'
+          }`}>
+          {menuItems.map((menuItem, index) => (
+            <MenuItem
+              key={index}
+              name={menuItem.name}
+              iconName={menuItem.iconName}
+              onPress={menuItem.onPress}
+              isSelected={menuItem.isSelected}
+            />
+          ))}
+        </TouchableOpacity>
+      </TouchableOpacity>
       <TouchableOpacity
         style={{backgroundColor: theme.bgWhite(0.3)}}
         onPress={navigateToHome}
@@ -236,16 +315,18 @@ const Uv = ({route}) => {
           ))}
         </View>
         <View className="flex flex-col gap-3">
-          <View
-            className={`w-auto flex flex-row justify-start pl-4 h-8 text-end items-end ${
-              currentInterface == 0 ? 'block' : 'hidden'
-            } `}>
-            <Text className="text-white text-4xl font-semibold w-auto text-end h-auto ">
-              {weather?.current?.[modifiedEndPoint]}
-            </Text>
-            <Text className="text-gray-300 text-2xl text-end h-8">
-              {weatherUnit[name]}
-            </Text>
+          <View className="w-full h-auto flex flex-row justify-between items-center">
+            <View
+              className={`w-auto flex flex-row justify-start pl-4 h-8 text-end items-end ${
+                currentInterface == 0 ? 'block' : 'hidden'
+              } `}>
+              <Text className="text-white text-4xl font-semibold w-auto text-end h-auto ">
+                {weather?.current?.[modifiedEndPoint]}
+              </Text>
+              <Text className="text-gray-300 text-2xl text-end h-8">
+                {weatherUnit[name]}
+              </Text>
+            </View>
           </View>
           <View
             className={`w-auto flex flex-row justify-start pl-4 h-8 text-end items-end ${

@@ -1,4 +1,4 @@
-export const apiKey = '7cf2d7a05b8d405a919120714240601';
+export const apiKey = '5a5c109347c64d9fbc8104250240702';
 
 export const weatherImages = {
     'Partly cloudy': require('../assets/images/partlycloudy.png'),
@@ -8,6 +8,7 @@ export const weatherImages = {
     'Clear': require('../assets/images/sun.png'),
     'Overcast': require('../assets/images/cloud.png'),
     'Cloudy': require('../assets/images/cloud.png'),
+    'Partly Cloudy': require('../assets/images/cloud.png'),
     'Light rain': require('../assets/images/moderaterain.png'),
     'Moderate rain at times': require('../assets/images/moderaterain.png'),
     'Heavy rain': require('../assets/images/heavyrain.png'),
@@ -16,7 +17,8 @@ export const weatherImages = {
     'Moderate or heavy rain shower': require('../assets/images/heavyrain.png'),
     'Moderate or heavy rain with thunder': require('../assets/images/heavyrain.png'),
     'Mist': require('../assets/images/mist.png'),
-    'other': require('../assets/images/moderaterain.png')
+    'other': require('../assets/images/moderaterain.png'),
+    'Light drizzle':require('../assets/images/moderaterain.png'),
 }
 export const weatherIcon = {
     "Humidity": require('../assets/icons/drop.png'),

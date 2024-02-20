@@ -15,7 +15,7 @@ import {theme} from '../../theme';
 import {XMarkIcon} from 'react-native-heroicons/outline';
 import {ChevronDownIcon} from 'react-native-heroicons/outline';
 import {CheckIcon} from 'react-native-heroicons/solid';
-const MenuItem = ({ name, iconName, onPress, isSelected }) => (
+const MenuItem = ({name, iconName, onPress, isSelected}) => (
   <TouchableOpacity
     className="w-full h-auto justify-between text-center hover:bg-gray-800 gap-4 flex flex-row pr-1 pl-3 py-2 items-center"
     onPress={onPress}>
@@ -44,6 +44,12 @@ const Uv = ({route}) => {
   const navigateToHumidity = indexx => navigateToScreen('Humidity', indexx);
   const navigateToUv = indexx => navigateToScreen('Uv Index', indexx);
   const navigateToPressure = indexx => navigateToScreen('Pressure', indexx);
+  const navigateToPrecipitation = indexx =>
+    navigateToScreen('Precipitation', indexx);
+  const navigateToRainProb = indexx =>
+    navigateToScreen('Rain Probability', indexx);
+  const navigateToVision = indexx => navigateToScreen('Vision', indexx);
+  const navigateToSunrise = indexx => navigateToScreen('Sunrise', indexx);
   const [openMenu, setOpenMenu] = useState(false);
 
   const weather = route.params?.prop1;
@@ -106,6 +112,15 @@ const Uv = ({route}) => {
     Wind: `Max Wind: ${weather?.forecast?.forecastday[currentInterface]?.day?.maxwind_kph} km/h`,
     Pressure: 'Average',
     Precipitation: 'Daily Total',
+    'Rain Probability': 'Today',
+    Vision:
+      weather?.forecast?.forecastday[currentInterface]?.hour[currentHour]
+        ?.vis_km >= 15
+        ? 'Totally Clear'
+        : weather?.forecast?.forecastday[currentInterface]?.hour[currentHour]
+            ?.vis_km >= 10
+        ? 'Clear'
+        : `Bad`,
   };
   const forecastadditionalEle = {
     Humidity: `Average`,
@@ -113,6 +128,13 @@ const Uv = ({route}) => {
     Wind: `Max Wind: ${weather?.forecast?.forecastday[currentInterface]?.day?.maxwind_kph} km/h`,
     Pressure: 'Average',
     Precipitation: 'Daily Total',
+    'Rain Probability': 'Average change of rain',
+    Vision:
+      weather?.forecast?.forecastday[currentInterface]?.day?.avgvis_km >= 15
+        ? 'Totally Clear'
+        : weather?.forecast?.forecastday[currentInterface]?.day?.avgvis_km >= 10
+        ? 'Clear'
+        : `Bad`,
   };
   const maxUV = Math.max(
     ...(weather?.forecast?.forecastday[currentInterface]?.hour.map(
@@ -202,16 +224,20 @@ const Uv = ({route}) => {
         ? 'It is advisable to employ sun protection measures.'
         : ''
     }`,
-    Precipitation: `On ${new Intl.DateTimeFormat('en-US', {weekday: 'long'}).format(
+    Precipitation: `On ${new Intl.DateTimeFormat('en-US', {
+      weekday: 'long',
+    }).format(
       new Date(weather?.forecast?.forecastday[currentInterface]?.date),
-    )}, total precipitation will be ${weather?.forecast?.forecastday[currentInterface]?.day?.totalprecip_mm}mm.`,
+    )}, total precipitation will be ${
+      weather?.forecast?.forecastday[currentInterface]?.day?.totalprecip_mm
+    }mm.`,
   };
   const DefinitionTitle = {
     Wind: 'How Wind Speed is measured?',
     Humidity: 'About relative Humidity',
     'Uv Index': 'About UV Index',
     Pressure: 'About Pressure',
-    Precipitation: 'About Precipitation'
+    Precipitation: 'About Precipitation',
   };
   const Definition = {
     'Uv Index':
@@ -221,9 +247,8 @@ const Uv = ({route}) => {
       'Relative humidity is the ratio of how much water vapour is in the air to how much water vapour the air could potentially contain at a given temperature. It varies with the temperature of the air: colder air can hold less vapour.',
     Pressure:
       'Pressure refers to atmospheric pressure, which is the force per unit area exerted on a surface by the weight of the air above that surface in the atmosphere of Earth (or another celestial body). High atmospheric pressure generally indicates clear and settled weather, while low pressure often indicates unsettled or stormy weather. Changes in atmospheric pressure are closely monitored in weather forecasting, and they play a crucial role in understanding and predicting weather patterns.',
-    Precipitation:
-    '',
-    };
+    Precipitation: '',
+  };
 
   const menuItems = [
     {
@@ -251,21 +276,27 @@ const Uv = ({route}) => {
       isSelected: name === 'Pressure',
     },
     {
-      name: 'Rain Prob',
-      iconName: 'Rain Prob',
-      onPress: () => navigateToPressure(currentInterface),
-      isSelected: name === 'Rain Prob',
+      name: 'Rain Probability',
+      iconName: 'Rain Probability',
+      onPress: () => navigateToRainProb(currentInterface),
+      isSelected: name === 'Rain Probability',
+    },
+    {
+      name: 'Precipitation',
+      iconName: 'Precipitation',
+      onPress: () => navigateToPrecipitation(currentInterface),
+      isSelected: name === 'Precipitation',
     },
     {
       name: 'Vision',
       iconName: 'Vision',
-      onPress: () => navigateToPressure(currentInterface),
+      onPress: () => navigateToVision(currentInterface),
       isSelected: name === 'Vision',
     },
     {
       name: 'Sunrise',
       iconName: 'Sunrise',
-      onPress: () => navigateToPressure(currentInterface),
+      onPress: () => navigateToSunrise(currentInterface),
       isSelected: name === 'Sunrise',
     },
   ];

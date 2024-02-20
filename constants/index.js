@@ -26,7 +26,7 @@ export const weatherIcon = {
     "Wind": require('../assets/icons/wind.png'),
     "Pressure": require('../assets/icons/gauge.png'),
     "Precipitation": require('../assets/icons/drop.png'),
-    "Rain Prob": require('../assets/icons/precipitation.png'),
+    "Rain Probability": require('../assets/icons/precipitation.png'),
     "Vision": require('../assets/icons/vision.png'),
     "Sunrise": require('../assets/icons/sunrise.png'),
 }
@@ -36,7 +36,7 @@ export const weatherEndpoint = {
     "Wind": "wind_kph",
     "Pressure": "pressure_mb",
     "Precipitation": "precip_mm",
-    "Rain Prob": "chance_of_rain",
+    "Rain Probability": "chance_of_rain",
     "Vision": "vis_km",
     "Sunrise": "",
 }
@@ -46,7 +46,7 @@ export const weatherUnit = {
     "Wind": "km/h",
     "Pressure": "hpa",
     "Precipitation": "mm",
-    "Rain Prob":"%",
+    "Rain Probability":"%",
     "Vision": "km",
     "Sunrise": "",
 }
@@ -64,7 +64,7 @@ export const comparisonName = {
     "Uv Index": "average UV Index",
     "Wind": "max wind speed",
     "Precipitation": "total precipitaion",
-    "Rain Prob":"",
+    "Rain Probability":"",
     "Vision": "",
     "Sunrise": "",
 }

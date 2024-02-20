@@ -250,6 +250,24 @@ const Uv = ({route}) => {
       onPress: () => navigateToPressure(currentInterface),
       isSelected: name === 'Pressure',
     },
+    {
+      name: 'Rain Prob',
+      iconName: 'Rain Prob',
+      onPress: () => navigateToPressure(currentInterface),
+      isSelected: name === 'Rain Prob',
+    },
+    {
+      name: 'Vision',
+      iconName: 'Vision',
+      onPress: () => navigateToPressure(currentInterface),
+      isSelected: name === 'Vision',
+    },
+    {
+      name: 'Sunrise',
+      iconName: 'Sunrise',
+      onPress: () => navigateToPressure(currentInterface),
+      isSelected: name === 'Sunrise',
+    },
   ];
 
   return (

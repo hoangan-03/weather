@@ -1,2 +1,2 @@
 # weather
- A minimal weather app using ReactNative
+ A minimal weather app using ReactNative (on developing, not finished)

@@ -1,21 +1,23 @@
-import {Dimensions} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {View, Text, Image, TouchableOpacity, ScrollView} from 'react-native';
-import {getData} from '../../utils/asyncStorage';
-import {weatherIcon} from '../../constants';
-import {weatherEndpoint} from '../../constants';
-import {weatherUnit} from '../../constants';
-import {subName} from '../../constants';
-import {mapWindDirection} from '../../constants';
-import {comparisonName} from '../../constants';
-import {LineChart, BarChart} from 'react-native-chart-kit';
-import {fetchHistory} from '../../api/weather';
-import {theme} from '../../theme';
-import {XMarkIcon} from 'react-native-heroicons/outline';
-import {ChevronDownIcon} from 'react-native-heroicons/outline';
-import {CheckIcon} from 'react-native-heroicons/solid';
-const MenuItem = ({name, iconName, onPress, isSelected}) => (
+/* eslint-disable react-native/no-inline-styles */
+import { Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { getData } from '../../utils/asyncStorage';
+import { weatherIcon } from '../../constants';
+import { weatherEndpoint } from '../../constants';
+import { weatherUnit } from '../../constants';
+import { subName } from '../../constants';
+import { mapWindDirection } from '../../constants';
+import { comparisonName } from '../../constants';
+import { LineChart, BarChart } from 'react-native-chart-kit';
+import { fetchHistory } from '../../api/weather';
+import { theme } from '../../theme';
+import { XMarkIcon } from 'react-native-heroicons/outline';
+import { ChevronDownIcon } from 'react-native-heroicons/outline';
+import { CheckIcon } from 'react-native-heroicons/solid';
+
+const MenuItem = ({ name, iconName, onPress, isSelected }) => (
   <TouchableOpacity
     className="w-full h-auto justify-between text-center hover:bg-gray-800 gap-4 flex flex-row pr-1 pl-3 py-2 items-center"
     onPress={onPress}>
@@ -30,7 +32,7 @@ const MenuItem = ({name, iconName, onPress, isSelected}) => (
     <Image source={weatherIcon[iconName]} className="w-5 h-5" />
   </TouchableOpacity>
 );
-const Uv = ({route}) => {
+const Elements = ({ route }) => {
   const [currentInterface, setCurrentInterface] = useState(0);
   const navigation = useNavigation();
   const navigateToScreen = (screenName, index) => {
@@ -91,7 +93,7 @@ const Uv = ({route}) => {
   const navigateToHome = () => {
     navigation.navigate('Home');
   };
-  const dailyStats = Array.from({length: 24}, (_, index) => {
+  const dailyStats = Array.from({ length: 24 }, (_, index) => {
     const hourData =
       weather?.forecast?.forecastday[currentInterface]?.hour[index];
     if (hourData && weatherEndpoint[name]) {
@@ -108,9 +110,9 @@ const Uv = ({route}) => {
   const currentHour = new Date().getHours();
   const additionalEle = {
     Humidity: `Dew point: ${weather?.forecast?.forecastday[currentInterface]?.hour[currentHour]?.dewpoint_c}°C`,
-    'Uv Index': 'Current UVI World Health Organization',
+    'Uv Index': 'Current UVI',
     Wind: `Max Wind: ${weather?.forecast?.forecastday[currentInterface]?.day?.maxwind_kph} km/h`,
-    Pressure: 'Average',
+    Pressure: 'Currently',
     Precipitation: 'Daily Total',
     'Rain Probability': 'Today',
     Vision:
@@ -118,13 +120,14 @@ const Uv = ({route}) => {
         ?.vis_km >= 15
         ? 'Totally Clear'
         : weather?.forecast?.forecastday[currentInterface]?.hour[currentHour]
-            ?.vis_km >= 10
-        ? 'Clear'
-        : `Bad`,
+          ?.vis_km >= 10
+          ? 'Clear'
+          : 'Bad',
+    Sunrise: '',
   };
   const forecastadditionalEle = {
-    Humidity: `Average`,
-    'Uv Index': 'Average UVI World Health Organization',
+    Humidity: 'Average',
+    'Uv Index': 'Average UVI',
     Wind: `Max Wind: ${weather?.forecast?.forecastday[currentInterface]?.day?.maxwind_kph} km/h`,
     Pressure: 'Average',
     Precipitation: 'Daily Total',
@@ -133,8 +136,9 @@ const Uv = ({route}) => {
       weather?.forecast?.forecastday[currentInterface]?.day?.avgvis_km >= 15
         ? 'Totally Clear'
         : weather?.forecast?.forecastday[currentInterface]?.day?.avgvis_km >= 10
-        ? 'Clear'
-        : `Bad`,
+          ? 'Clear'
+          : 'Bad',
+    Sunrise: '',
   };
   const maxUV = Math.max(
     ...(weather?.forecast?.forecastday[currentInterface]?.hour.map(
@@ -163,74 +167,96 @@ const Uv = ({route}) => {
   }
 
   const summary = {
-    Humidity: `The current humidity is ${
-      weather?.current?.humidity
-    }%. Today, the average humidity is ${
-      weather?.forecast?.forecastday[0]?.day?.avghumidity
-    }%. The dew point fluctuates from ${Math.min(
-      ...(weather?.forecast?.forecastday[0]?.hour.map(
-        hour => hour?.dewpoint_c || 0,
-      ) || []),
-    )}\u00b0C to ${Math.max(
-      ...(weather?.forecast?.forecastday[0]?.hour.map(
-        hour => hour?.dewpoint_c || 0,
-      ) || []),
-    )}\u00b0C throughout the day.`,
-    Wind: `The current wind is ${
-      weather?.current?.wind_kph
-    } km/h from the ${mapWindDirection(
-      weather?.current?.wind_dir,
-    )}. Today, the wind speed is up to ${
-      weather?.forecast?.forecastday[0]?.day?.maxwind_kph
-    } km/h, with gusts reaching up to ${weather?.current?.gust_kph} km/h`,
-    'Uv Index': `Currently, The UV Index is ${
-      weather?.current?.uv
-    }. Today, the highest UV Index is ${maxUV}, considered ${uvIndexLevel} in WHO UV Index. ${
-      uvIndexLevel == 'High' ||
-      uvIndexLevel == 'Very High' ||
-      uvIndexLevel == 'Extreme'
+    Humidity: `The current humidity is ${weather?.current?.humidity
+      }%. Today, the average humidity is ${weather?.forecast?.forecastday[0]?.day?.avghumidity
+      }%. The dew point fluctuates from ${Math.min(
+        ...(weather?.forecast?.forecastday[0]?.hour.map(
+          hour => hour?.dewpoint_c || 0,
+        ) || []),
+      )}\u00b0C to ${Math.max(
+        ...(weather?.forecast?.forecastday[0]?.hour.map(
+          hour => hour?.dewpoint_c || 0,
+        ) || []),
+      )}\u00b0C throughout the day.`,
+    Wind: `The current wind is ${weather?.current?.wind_kph
+      } km/h from the ${mapWindDirection(
+        weather?.current?.wind_dir,
+      )}. Today, the wind speed is up to ${weather?.forecast?.forecastday[0]?.day?.maxwind_kph
+      } km/h, with gusts reaching up to ${weather?.current?.gust_kph} km/h`,
+    'Uv Index': `Currently, The UV Index is ${weather?.current?.uv
+      }. Today, the highest UV Index is ${maxUV}, considered ${uvIndexLevel} in WHO UV Index. ${uvIndexLevel === 'High' ||
+        uvIndexLevel === 'Very High' ||
+        uvIndexLevel === 'Extreme'
         ? 'It is advisable to employ sun protection measures.'
         : ''
-    }`,
+      }`,
+    Vision: `The current visibility is ${weather?.current?.vis_km} km`,
+    Pressure: `The current pressure is ${weather?.current?.pressure_mb} mb. Today, the average pressure is ${averagePressure} mb.`,
     Precipitation: `It has been precipitation of ${weather?.forecast?.forecastday[0]?.day?.totalprecip_mm}mm in last 24 hours.`,
+    'Rain Probability': `The chance of rain today is ${weather?.forecast?.forecastday[0]?.day?.daily_chance_of_rain}%. It is expected to be ${weather?.forecast?.forecastday[0]?.day?.daily_chance_of_rain < 20
+      ? 'isolated'
+      : weather?.forecast?.forecastday[0]?.day?.daily_chance_of_rain < 30
+        ? 'widely scattered'
+        : weather?.forecast?.forecastday[0]?.day?.daily_chance_of_rain < 50
+          ? 'scattered showers'
+          : weather?.forecast?.forecastday[0]?.day?.daily_chance_of_rain < 70
+            ? 'likely'
+            : 'occasional'
+      }.`,
   };
   const forecastSummary = {
-    Humidity: `On ${new Intl.DateTimeFormat('en-US', {weekday: 'long'}).format(
+    Humidity: `On ${new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(
       new Date(weather?.forecast?.forecastday[currentInterface]?.date),
-    )}, the average humidity is ${
-      weather?.forecast?.forecastday[currentInterface]?.day?.avghumidity
-    }%. The dew point fluctuates from ${Math.min(
-      ...(weather?.forecast?.forecastday[currentInterface]?.hour.map(
-        hour => hour?.dewpoint_c || 0,
-      ) || []),
-    )}\u00b0C to ${Math.max(
-      ...(weather?.forecast?.forecastday[currentInterface]?.hour.map(
-        hour => hour?.dewpoint_c || 0,
-      ) || []),
-    )}\u00b0C throughout the day.`,
-    Wind: `On ${new Intl.DateTimeFormat('en-US', {weekday: 'long'}).format(
+    )}, the average humidity is ${weather?.forecast?.forecastday[currentInterface]?.day?.avghumidity
+      }%. The dew point fluctuates from ${Math.min(
+        ...(weather?.forecast?.forecastday[currentInterface]?.hour.map(
+          hour => hour?.dewpoint_c || 0,
+        ) || []),
+      )}\u00b0C to ${Math.max(
+        ...(weather?.forecast?.forecastday[currentInterface]?.hour.map(
+          hour => hour?.dewpoint_c || 0,
+        ) || []),
+      )}\u00b0C throughout the day.`,
+    Wind: `On ${new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(
       new Date(weather?.forecast?.forecastday[currentInterface]?.date),
-    )}, the wind speed will be up to ${
-      weather?.forecast?.forecastday[currentInterface]?.day?.maxwind_kph
-    } km/h.`,
+    )}, the wind speed will be up to ${weather?.forecast?.forecastday[currentInterface]?.day?.maxwind_kph
+      } km/h.`,
     'Uv Index': `On ${new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
     }).format(
       new Date(weather?.forecast?.forecastday[currentInterface]?.date),
-    )}, the highest UV Index is ${maxUV}, considered ${uvIndexLevel} in WHO UV Index. ${
-      uvIndexLevel == 'High' ||
-      uvIndexLevel == 'Very High' ||
-      uvIndexLevel == 'Extreme'
-        ? 'It is advisable to employ sun protection measures.'
-        : ''
-    }`,
+    )}, the highest UV Index is ${maxUV}, considered ${uvIndexLevel} in WHO UV Index. ${uvIndexLevel === 'High' ||
+      uvIndexLevel === 'Very High' ||
+      uvIndexLevel === 'Extreme'
+      ? 'It is advisable to employ sun protection measures.'
+      : ''
+      }`,
+    Pressure: `On ${new Intl.DateTimeFormat('en-US', {
+      weekday: 'long',
+    }).format(
+      new Date(weather?.forecast?.forecastday[currentInterface]?.date),
+    )}, the average pressure will be ${Math.round(
+      weather?.forecast?.forecastday[currentInterface]?.hour.reduce((sum, hour) => sum + hour.pressure_mb, 0) / weather?.forecast?.forecastday[currentInterface]?.hour.length
+    )
+      } mb.`,
     Precipitation: `On ${new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
     }).format(
       new Date(weather?.forecast?.forecastday[currentInterface]?.date),
-    )}, total precipitation will be ${
-      weather?.forecast?.forecastday[currentInterface]?.day?.totalprecip_mm
-    }mm.`,
+    )}, total precipitation will be ${weather?.forecast?.forecastday[currentInterface]?.day?.totalprecip_mm
+      }mm.`,
+    'Rain Probability': `On ${new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(
+      new Date(weather?.forecast?.forecastday[currentInterface]?.date),
+    )}, the chance of rain is ${weather?.forecast?.forecastday[currentInterface]?.day?.daily_chance_of_rain}%. It is expected to be ${weather?.forecast?.forecastday[currentInterface]?.day?.daily_chance_of_rain < 20
+      ? 'isolated'
+      : weather?.forecast?.forecastday[currentInterface]?.day?.daily_chance_of_rain < 30
+        ? 'widely scattered'
+        : weather?.forecast?.forecastday[currentInterface]?.day?.daily_chance_of_rain < 50
+          ? 'scattered showers'
+          : weather?.forecast?.forecastday[currentInterface]?.day?.daily_chance_of_rain < 70
+            ? 'likely'
+            : 'occasional'
+      }.`,
   };
   const DefinitionTitle = {
     Wind: 'How Wind Speed is measured?',
@@ -238,6 +264,9 @@ const Uv = ({route}) => {
     'Uv Index': 'About UV Index',
     Pressure: 'About Pressure',
     Precipitation: 'About Precipitation',
+    'Rain Probability': 'About Rain Probability',
+    Vision: 'About Vision',
+    Sunrise: 'About Sunrise',
   };
   const Definition = {
     'Uv Index':
@@ -247,7 +276,11 @@ const Uv = ({route}) => {
       'Relative humidity is the ratio of how much water vapour is in the air to how much water vapour the air could potentially contain at a given temperature. It varies with the temperature of the air: colder air can hold less vapour.',
     Pressure:
       'Pressure refers to atmospheric pressure, which is the force per unit area exerted on a surface by the weight of the air above that surface in the atmosphere of Earth (or another celestial body). High atmospheric pressure generally indicates clear and settled weather, while low pressure often indicates unsettled or stormy weather. Changes in atmospheric pressure are closely monitored in weather forecasting, and they play a crucial role in understanding and predicting weather patterns.',
-    Precipitation: '',
+    Precipitation: 'Precipitation refers to any form of water—liquid or solid—that falls from clouds and reaches the ground. This includes rain, snow, sleet, hail, or drizzle. Precipitation is typically measured in terms of depth (millimeters or inches) over a specific period of time, indicating how much water would accumulate if it fell evenly over the area.',
+    'Rain Probability': 'There are a number of interpretations of "chance of rain", but unless a forecast specifically says it is for heavy rain or within a distance, it can be assumed that it is the chance of any rain in the hour at the location. ',
+    Vision:
+      'Visibility is a measure of the distance at which an object or light can be clearly discerned. It is reported in kilometers or miles. Visibility is affected by weather conditions, such as fog, rain, snow, or haze, and is important for air and ground traffic safety.',
+    Sunrise: 'The time of sunrise is defined as the moment the upper limb of the sun’s disk touches the horizon in the morning. This time varies by location, date, and local topography, playing a significant role in daily planning and activities.',
   };
 
   const menuItems = [
@@ -276,7 +309,7 @@ const Uv = ({route}) => {
       isSelected: name === 'Pressure',
     },
     {
-      name: 'Rain Probability',
+      name: 'Rain Prob',
       iconName: 'Rain Probability',
       onPress: () => navigateToRainProb(currentInterface),
       isSelected: name === 'Rain Probability',
@@ -303,24 +336,23 @@ const Uv = ({route}) => {
 
   return (
     <ScrollView
-      style={[{height: screenHeight}]}
+      style={[{ height: screenHeight }]}
       className="w-full flex relative  ">
       <Image
         source={require('../../assets/wind.jpg')}
         className="absolute w-full h-full  object-cover "
       />
-      <View className="w-full h-full absolute bg-black/50 backdrop-blur-sm"></View>
+      <View className="w-full h-full absolute bg-black/50 backdrop-blur-sm" />
       <TouchableOpacity className="w-[70px] mr-4 h-auto gap-2 absolute top-[240px] right-[10px] z-[1000]">
         <TouchableOpacity
-          className={`w-[70px]  h-[30px] bg-gray-500 rounded-[15px] gap-2 flex flex-row justify-center`}
+          className={'w-[70px] h-[30px] bg-gray-500 rounded-[15px] gap-2 flex flex-row justify-center'}
           onPress={() => setOpenMenu(!openMenu)}>
           <Image source={weatherIcon[route.name]} className="w-4 h-4" />
           <ChevronDownIcon size="20" color="white" />
         </TouchableOpacity>
         <TouchableOpacity
-          className={`flex w-[200px] absolute right-0 top-10 rounded-xl bg-gray-800 h-[400px] flex-col ${
-            openMenu ? 'block' : 'hidden'
-          }`}>
+          className={`flex w-[200px] absolute right-0 top-10 rounded-xl bg-gray-800 h-[400px] flex-col ${openMenu ? 'block' : 'hidden'
+            }`}>
           {menuItems.map((menuItem, index) => (
             <MenuItem
               key={index}
@@ -333,7 +365,7 @@ const Uv = ({route}) => {
         </TouchableOpacity>
       </TouchableOpacity>
       <TouchableOpacity
-        style={{backgroundColor: theme.bgWhite(0.3)}}
+        style={{ backgroundColor: theme.bgWhite(0.3) }}
         onPress={navigateToHome}
         className="w-12 h-12 right-4 absolute top-12 rounded-full p-3 m-1 bg-gray-400/50
         ">
@@ -349,25 +381,21 @@ const Uv = ({route}) => {
           {[...Array(7).keys()].map(index => (
             <TouchableOpacity
               key={index}
-              className={`flex flex-col gap-2 justify-center items-center`}
+              className={'flex flex-col gap-2 justify-center items-center'}
               onPress={() => setCurrentInterface(index)}>
               <Text className="text-white uppercase">
-                {new Intl.DateTimeFormat('en-US', {weekday: 'short'}).format(
+                {new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(
                   new Date(weather?.forecast?.forecastday[index]?.date),
                 )}
               </Text>
               <View
-                className={`flex justify-center items-center flex-row rounded-full h-8 w-8 ${
-                  currentInterface === index ? 'bg-blue-300' : ''
-                }`}>
-                <Text
-                  className={`text-base h-auto w-auto font-bold ${
-                    currentInterface === index ? 'text-black' : 'text-white'
+                className={`flex justify-center items-center flex-row rounded-full h-8 w-8 ${currentInterface === index ? 'bg-blue-300' : ''
                   }`}>
+                <Text
+                  className={`text-base h-auto w-auto font-bold ${currentInterface === index ? 'text-black' : 'text-white'
+                    }`}>
                   {new Date(weather?.forecast?.forecastday[index]?.date)
-                    .getDate()
-                    .toString()
-                    .padStart(2, '0')}
+                    .getDate().toString().padStart(2, '0')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -376,11 +404,13 @@ const Uv = ({route}) => {
         <View className="flex flex-col gap-3">
           <View className="w-full h-auto flex flex-row justify-between items-center">
             <View
-              className={`w-auto flex flex-row justify-start pl-4 h-8 text-end items-end ${
-                currentInterface == 0 ? 'block' : 'hidden'
-              } `}>
-              <Text className="text-white text-4xl font-semibold w-auto text-end h-auto ">
-                {weather?.current?.[modifiedEndPoint]}
+              className={`w-auto flex flex-row justify-start pl-4 h-8 text-end items-end ${currentInterface === 0 ? 'block' : 'hidden'}`}>
+              <Text className="text-white text-4xl font-semibold w-auto text-end h-auto">
+                {name === 'Sunrise'
+                  ? weather?.forecast?.forecastday[0]?.astro?.sunrise
+                  : name === 'Rain Probability'
+                    ? weather?.forecast?.forecastday[0]?.day?.daily_chance_of_rain
+                    : weather?.current?.[modifiedEndPoint]}
               </Text>
               <Text className="text-gray-300 text-2xl text-end h-8">
                 {weatherUnit[name]}
@@ -388,15 +418,16 @@ const Uv = ({route}) => {
             </View>
           </View>
           <View
-            className={`w-auto flex flex-row justify-start pl-4 h-8 text-end items-end ${
-              currentInterface == 0 || name == 'Wind' ? 'hidden' : 'block'
-            } `}>
+            className={`w-auto flex flex-row justify-start pl-4 h-8 text-end items-end ${currentInterface === 0 || name === 'Wind' ? 'hidden' : 'block'
+              } `}>
             <Text className="text-white text-4xl font-semibold w-auto text-end h-auto">
               {name === 'Pressure'
                 ? averagePressure
-                : weather?.forecast?.forecastday[currentInterface]?.day?.[
-                    subName[modifiedEndPoint]
-                  ]}
+                : name === 'Sunrise'
+                  ? weather?.forecast?.forecastday[currentInterface]?.astro?.sunrise
+                  : name === 'Rain Probability'
+                    ? weather?.forecast?.forecastday[currentInterface]?.day?.daily_chance_of_rain
+                    : weather?.forecast?.forecastday[currentInterface]?.day?.[subName[modifiedEndPoint]]}
             </Text>
 
             <Text className="text-gray-300 text-2xl text-end h-8">
@@ -404,15 +435,11 @@ const Uv = ({route}) => {
             </Text>
           </View>
           <Text
-            className={`text-gray-300 text-xl w-full pl-4 h-8  mb-4 ${
-              currentInterface == 0 ? 'hidden' : 'block'
-            }`}>
+            className={`text-gray-300 text-xl w-full pl-4 h-8 mb-4 ${currentInterface === 0 ? 'hidden' : 'block'}`}>
             {forecastadditionalEle[name]}
           </Text>
           <Text
-            className={`text-gray-300 text-xl w-full pl-4 h-8 mb-4 ${
-              currentInterface == 0 ? 'block' : 'hidden'
-            }`}>
+            className={`text-gray-300 text-xl w-full pl-4 h-8 mb-4 ${currentInterface === 0 ? 'block' : 'hidden'}`}>
             {additionalEle[name]}
           </Text>
         </View>
@@ -438,8 +465,8 @@ const Uv = ({route}) => {
             backgroundGradientToOpacity: 0,
 
             decimalPlaces: 0,
-            color: () => `rgba(0, 225, 255, 0.8)`,
-            labelColor: () => `rgba(255, 255, 255, 1)`,
+            color: () => 'rgba(0, 225, 255, 0.8)',
+            labelColor: () => 'rgba(255, 255, 255, 1)',
             strokeWidth: 3,
 
             propsForBackgroundLines: {
@@ -463,16 +490,16 @@ const Uv = ({route}) => {
             marginRight: 20,
           }}
         />
-        <View className="flex flex-col gap-2">
+        <View className={`flex flex-col gap-2 ${name !== 'Sunrise' ? 'block' : 'hidden'}`}>
           <Text className="text-white text-xl w-full font-semibold pl-4 h-auto">
             Summary
           </Text>
-          <View className={`${currentInterface == 0 ? 'block' : 'hidden'}`}>
+          <View className={`${currentInterface === 0 ? 'block' : 'hidden'}`}>
             <Text className="text-white flex text-base rounded-lg w-[350]  h-auto ml-4 px-4 py-3 bg-gray-600/80">
               {summary[name]}
             </Text>
           </View>
-          <View className={`${currentInterface == 0 ? 'hidden' : 'block'}`}>
+          <View className={`${currentInterface === 0 ? 'hidden' : 'block'}`}>
             <Text className="text-white flex text-base rounded-lg w-[350]  h-auto ml-4 px-4 py-3 bg-gray-600/80">
               {forecastSummary[name]}
             </Text>
@@ -480,11 +507,10 @@ const Uv = ({route}) => {
         </View>
 
         <View
-          className={`flex flex-col gap-2 ${
-            currentInterface == 0 && name != 'Pressure' ? 'block' : 'hidden'
-          }`}>
+          className={`flex flex-col gap-2 ${currentInterface === 0 && name !== 'Pressure' && name !== 'Sunrise' ? 'block' : 'hidden'
+            }`}>
           <Text
-            className={`text-white text-xl w-full font-semibold pl-4 h-auto `}>
+            className={'text-white text-xl w-full font-semibold pl-4 h-auto'}>
             Comparison
           </Text>
           <View>
@@ -494,9 +520,9 @@ const Uv = ({route}) => {
                 {weather?.forecast?.forecastday[0]?.day?.[
                   subName[modifiedEndPoint]
                 ] >
-                history?.forecast?.forecastday[0]?.day?.[
+                  history?.forecast?.forecastday[0]?.day?.[
                   subName[modifiedEndPoint]
-                ]
+                  ]
                   ? 'higher'
                   : 'lower'}{' '}
                 than that of yesterday.
@@ -529,7 +555,7 @@ const Uv = ({route}) => {
                   backgroundGradientFromOpacity: 0,
                   backgroundGradientToOpacity: 0,
                   decimalPlaces: 1,
-                  color: () => `rgba(255, 255, 255, 1)`,
+                  color: () => 'rgba(255, 255, 255, 1)',
                   propsForLabels: {
                     stroke: '#FFFFFF',
                     opacity: 1,
@@ -556,4 +582,4 @@ const Uv = ({route}) => {
   );
 };
 
-export default Uv;
+export default Elements;

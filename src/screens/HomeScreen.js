@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   View,
   Text,
@@ -16,7 +17,7 @@ import {fetchLocations, fetchWeatherForecast} from '../../api/weather';
 import * as Progress from 'react-native-progress';
 import {StatusBar} from 'expo-status-bar';
 import {weatherImages} from '../../constants';
-import {Dimensions} from 'react-native';
+// import {Dimensions} from 'react-native';
 import {getData, storeData} from '../../utils/asyncStorage';
 import {useNavigation} from '@react-navigation/native';
 
@@ -41,14 +42,16 @@ export default function HomeScreen() {
   const navigateToUv = () => navigateToScreen('Uv Index');
   const navigateToPressure = () => navigateToScreen('Pressure');
   const navigateToPrecipitation = () => navigateToScreen('Precipitation');
-
+  const navigateToRainProbability = () => navigateToScreen('Rain Probability');
+  const navigateToVision = () => navigateToScreen('Vision');
+  const navigateToSunrise = () => navigateToScreen('Sunrise');
   const handleSearch = search => {
     // console.log('value: ',search);
     if (search && search.length > 2)
-      fetchLocations({cityName: search}).then(data => {
+      {fetchLocations({cityName: search}).then(data => {
         // console.log('got locations: ',data);
         setLocations(data);
-      });
+      });}
   };
 
   const handleLocation = loc => {
@@ -84,11 +87,12 @@ export default function HomeScreen() {
     });
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleTextDebounce = useCallback(debounce(handleSearch, 1200), []);
 
   const {location, current, forecast} = weather;
-  const screenHeight = Dimensions.get('window').height;
-  const halfScreenHeight = screenHeight * 2;
+  // const screenHeight = Dimensions.get('window').height;
+  // const halfScreenHeight = screenHeight * 2;
   const currentHour = Math.ceil(new Date().getHours());
   const willItRain =
     weather?.forecast?.forecastday[0]?.hour[currentHour]?.chance_of_rain;
@@ -142,13 +146,13 @@ export default function HomeScreen() {
             {locations.length > 0 && showSearch ? (
               <View className="absolute w-full bg-gray-300 top-16 rounded-3xl ">
                 {locations.map((loc, index) => {
-                  let showBorder = index + 1 != locations.length;
+                  let showBorder = index + 1 !== locations.length;
                   let borderClass = showBorder
                     ? ' border-b-2 border-b-gray-400'
                     : '';
                   return (
                     <TouchableOpacity
-                      key={index}
+                    key={loc.id || index} 
                       onPress={() => handleLocation(loc)}
                       className={
                         'flex-row items-center border-0 p-3 px-4 mb-1 ' +
@@ -280,7 +284,7 @@ export default function HomeScreen() {
             </View>
             <View className="flex-row justify-around  ">
               <View className="flex-col justify-center gap-3 items-center">
-                <TouchableOpacity 
+                <TouchableOpacity
                 onPress={navigateToPrecipitation} className="flex-row gap-2 pl-3 pr-4 pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
                   <Image
                     source={require('../../assets/icons/weather.png')}
@@ -295,15 +299,15 @@ export default function HomeScreen() {
                 </Text>
               </View>
               <View className="flex-col justify-center gap-3 items-center">
-                <View className="flex-row gap-2 pl-3 pr-4  pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
+                <TouchableOpacity  onPress={navigateToRainProbability}  className="flex-row gap-2 pl-3 pr-4  pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
                   <Image
                     source={require('../../assets/icons/precipitation.png')}
                     className="w-6 h-6"
                   />
                   <Text className="text-white font-semibold text-xl">
-                    Rain Probability
+                    Rain Prob
                   </Text>
-                </View>
+                </TouchableOpacity>
                 <Text className="text-white font-semibold text-2xl">
                   {willItRain}
                   <Text className="text-gray-400">%</Text>
@@ -312,7 +316,7 @@ export default function HomeScreen() {
             </View>
             <View className="flex-row justify-around  ">
               <View className="flex-col justify-center gap-3 items-center">
-                <View className="flex-row gap-2 pl-3 pr-4 pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
+                <TouchableOpacity onPress={navigateToVision}  className="flex-row gap-2 pl-3 pr-4 pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
                   <Image
                     source={require('../../assets/icons/vision.png')}
                     className="w-6 h-6 invert"
@@ -320,13 +324,13 @@ export default function HomeScreen() {
                   <Text className="text-white font-semibold text-xl">
                     Vision
                   </Text>
-                </View>
+                </TouchableOpacity>
                 <Text className="text-white font-semibold text-2xl">
                   {currentVision} <Text className="text-gray-400">km</Text>
                 </Text>
               </View>
               <View className="flex-col justify-center gap-3 items-center">
-                <View className="flex-row gap-2 pl-3 pr-4  pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
+                <TouchableOpacity onPress={navigateToSunrise} className="flex-row gap-2 pl-3 pr-4  pb-2 text-xl  items-center justify-center bg-gray-400/50 rounded-2xl ">
                   <Image
                     source={require('../../assets/icons/sunrise.png')}
                     className="w-6 h-6"
@@ -334,7 +338,7 @@ export default function HomeScreen() {
                   <Text className="text-white font-semibold text-xl">
                     Sunrise
                   </Text>
-                </View>
+                </TouchableOpacity>
                 <Text className="text-white font-semibold text-2xl">
                   {weather?.forecast?.forecastday[0]?.astro?.sunrise}
                 </Text>
@@ -343,7 +347,7 @@ export default function HomeScreen() {
           </View>
 
           {/* forecast for next days */}
-          <View className="mb-2 mt-5 space-y-3">
+          <View className="mb-2 mt-16 space-y-3">
             <View className="flex-row items-center mx-5 space-x-2">
               <CalendarDaysIcon size="22" color="white" />
               <Text className="text-white text-base">Hourly forecast</Text>
@@ -371,7 +375,7 @@ export default function HomeScreen() {
 
                     return (
                       <TouchableOpacity
-                        key={index}
+                        key={hourlyData.time_epoch || index}
                         className="border-b-2 border-white/10 px-2">
                         <View className="flex flex-row justify-between gap-10 items-center w-full">
                           <Text className="text-white w-24 font-bold text-xl">

@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {Dropdown} from 'react-native-element-dropdown';
+import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 
 const data = [
-  {label: 'miles/hour (mi/h)', value: 1},
-  {label: 'kilometer/hour (km/h)', value: 2},
+  { label: 'miles/hour (mi/h)', value: 1 },
+  { label: 'kilometer/hour (km/h)', value: 2 },
 
 ];
 
@@ -24,7 +24,7 @@ const DropdownComponent = () => {
         iconStyle={styles.iconStyle}
         itemTextStyle={styles.itemTextStyle}
         data={data}
-        activeColor='#dee9ff'
+        activeColor="#dee9ff"
         maxHeight={300}
         labelField="label"
         valueField="value"
@@ -38,8 +38,7 @@ const DropdownComponent = () => {
           setValue(item.value);
           setIsFocus(false);
         }}
-        
-        dropdownPosition='top'
+        dropdownPosition="top"
       />
     </View>
   );
@@ -52,8 +51,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingTop: 10,
   },
-  itemContainerStyle:{
-    
+  itemContainerStyle: {
     backgroundColor: 'white',
   },
 
@@ -70,7 +68,7 @@ const styles = StyleSheet.create({
   },
   label: {
     position: 'absolute',
- 
+
     left: 22,
     top: 8,
     zIndex: 999,
@@ -87,12 +85,12 @@ const styles = StyleSheet.create({
   },
   itemTextStyle: {
     fontSize: 14,
-   
+
 
   },
   iconStyle: {
     width: 20,
     height: 20,
   },
-  
+
 });

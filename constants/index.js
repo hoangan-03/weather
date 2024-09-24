@@ -1,4 +1,4 @@
-export const apiKey = '5a5c109347c64d9fbc8104250240702';
+export const apiKey = 'cfa14b47552f41cdb2652457242309';
 
 export const weatherImages = {
     'Partly cloudy': require('../assets/images/partlycloudy.png'),
@@ -21,52 +21,52 @@ export const weatherImages = {
     'Light drizzle':require('../assets/images/moderaterain.png'),
 }
 export const weatherIcon = {
-    "Humidity": require('../assets/icons/drop.png'),
-    "Uv Index": require("../assets/icons/rays.png"),
-    "Wind": require('../assets/icons/wind.png'),
-    "Pressure": require('../assets/icons/gauge.png'),
-    "Precipitation": require('../assets/icons/drop.png'),
-    "Rain Probability": require('../assets/icons/precipitation.png'),
-    "Vision": require('../assets/icons/vision.png'),
-    "Sunrise": require('../assets/icons/sunrise.png'),
+    'Humidity': require('../assets/icons/drop.png'),
+    'Uv Index': require('../assets/icons/rays.png'),
+    'Wind': require('../assets/icons/wind.png'),
+    'Pressure': require('../assets/icons/gauge.png'),
+    'Precipitation': require('../assets/icons/drop.png'),
+    'Rain Probability': require('../assets/icons/precipitation.png'),
+    'Vision': require('../assets/icons/vision.png'),
+    'Sunrise': require('../assets/icons/sunrise.png'),
 }
 export const weatherEndpoint = {
-    "Humidity": "humidity",
-    "Uv Index": "uv",
-    "Wind": "wind_kph",
-    "Pressure": "pressure_mb",
-    "Precipitation": "precip_mm",
-    "Rain Probability": "chance_of_rain",
-    "Vision": "vis_km",
-    "Sunrise": "",
+    'Humidity': 'humidity',
+    'Uv Index': 'uv',
+    'Wind': 'wind_kph',
+    'Pressure': 'pressure_mb',
+    'Precipitation': 'precip_mm',
+    'Rain Probability': 'chance_of_rain',
+    'Vision': 'vis_km',
+    'Sunrise': '',
 }
 export const weatherUnit = {
-    "Humidity": "%",
-    "Uv Index": "",
-    "Wind": "km/h",
-    "Pressure": "hpa",
-    "Precipitation": "mm",
-    "Rain Probability":"%",
-    "Vision": "km",
-    "Sunrise": "",
+    'Humidity': '%',
+    'Uv Index': '',
+    'Wind': 'km/h',
+    'Pressure': 'hpa',
+    'Precipitation': 'mm',
+    'Rain Probability':'%',
+    'Vision': 'km',
+    'Sunrise': '',
 }
 export const subName = {
-    "humidity": "avghumidity",
-    "uv": "uv",
-    "wind_kph": "maxwind_kph",
-    "Pressure": "",
-    "precip_mm": "totalprecip_mm",
-    "chance_of_rain": "daily_chance_of_rain",
-    "vis_km": "avgvis_km",
+    'humidity': 'avghumidity',
+    'uv': 'uv',
+    'wind_kph': 'maxwind_kph',
+    'Pressure': '',
+    'precip_mm': 'totalprecip_mm',
+    'chance_of_rain': 'daily_chance_of_rain',
+    'vis_km': 'avgvis_km',
 }
 export const comparisonName = {
-    "Humidity": "average humidity",
-    "Uv Index": "average UV Index",
-    "Wind": "max wind speed",
-    "Precipitation": "total precipitaion",
-    "Rain Probability":"",
-    "Vision": "",
-    "Sunrise": "",
+    'Humidity': 'average humidity',
+    'Uv Index': 'average UV Index',
+    'Wind': 'max wind speed',
+    'Precipitation': 'total precipitaion',
+    'Rain Probability':'probability of rain',
+    'Vision': 'vision range',
+    'Sunrise': '',
 }
 export const mapWindDirection = direction => {
     const directionMap = {

@@ -1,8 +1,8 @@
-import React from 'react'
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen.js';
-import Elements from '../screens/Elements.js';
+import Elements from '../screens/elements.js';
 import { LogBox } from 'react-native';
 
 const Stack = createNativeStackNavigator();
@@ -26,6 +26,6 @@ export default function AppNavigation() {
       <Stack.Screen name="Sunrise" options={{headerShown: false}} component={Elements} />
       </Stack.Navigator>
     </NavigationContainer>
-  )
-  
+  );
+
 }

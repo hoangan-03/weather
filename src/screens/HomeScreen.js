@@ -98,7 +98,7 @@ export default function HomeScreen() {
       />
       <ScrollView className="absolute w-full h-full bg-black/40 " />
       {loading ? (
-        <View className="flex-1 w-full h-full flex-row justify-center items-center">
+        <View className="flex-1 w-screen h-screen flex-row justify-center items-center">
           <Progress.CircleSnail thickness={10} size={140} color="#0bb3b2" />
         </View>
       ) : (
@@ -179,7 +179,6 @@ export default function HomeScreen() {
               <View className="flex-row flex items-center  justify-center gap-1">
                 <View className="w-[169] h-[169]">
                   <Image
-                    // source={{uri: 'https:'+current?.condition?.icon}}
                     source={weatherImages[current?.condition?.text || 'other']}
                     className="w-full h-full backdrop-blur-sm object-cover"
                   />
@@ -384,7 +383,7 @@ export default function HomeScreen() {
                     );
                   } else {
                     console.error('Invalid timestamp string:', timestampString);
-                    return null; // or handle the error in another way
+                    return null;
                   }
                 })}
             </View>

@@ -41,28 +41,25 @@ const Elements = ({ route }) => {
     });
     setCurrentInterface(index);
   };
-
   const navigateToWind = indexx => navigateToScreen('Wind', indexx);
   const navigateToHumidity = indexx => navigateToScreen('Humidity', indexx);
   const navigateToUv = indexx => navigateToScreen('Uv Index', indexx);
   const navigateToPressure = indexx => navigateToScreen('Pressure', indexx);
-  const navigateToPrecipitation = indexx =>
-    navigateToScreen('Precipitation', indexx);
-  const navigateToRainProb = indexx =>
-    navigateToScreen('Rain Probability', indexx);
+  const navigateToPrecipitation = indexx => navigateToScreen('Precipitation', indexx);
+  const navigateToRainProb = indexx => navigateToScreen('Rain Probability', indexx);
   const navigateToVision = indexx => navigateToScreen('Vision', indexx);
   const navigateToSunrise = indexx => navigateToScreen('Sunrise', indexx);
-  const [openMenu, setOpenMenu] = useState(false);
 
+  const [openMenu, setOpenMenu] = useState(false);
   const weather = route.params?.prop1;
   const screenHeight = Dimensions.get('window').height;
   const [history, setHistory] = useState({});
 
   useEffect(() => {
-    fetchMyWeatherData();
+    fetchWeatherData();
   }, []);
 
-  const fetchMyWeatherData = async () => {
+  const fetchWeatherData = async () => {
     let myCity = await getData('city');
     let cityName = 'Ha Noi';
 
@@ -120,10 +117,10 @@ const Elements = ({ route }) => {
         ?.vis_km >= 15
         ? 'Totally Clear'
         : weather?.forecast?.forecastday[currentInterface]?.hour[currentHour]
-          ?.vis_km >= 10
+          ?.vis_km >= 8
           ? 'Clear'
           : 'Bad',
-    Sunrise: '',
+    Sunrise: 'Sunrise',
   };
   const forecastadditionalEle = {
     Humidity: 'Average',
@@ -135,10 +132,10 @@ const Elements = ({ route }) => {
     Vision:
       weather?.forecast?.forecastday[currentInterface]?.day?.avgvis_km >= 15
         ? 'Totally Clear'
-        : weather?.forecast?.forecastday[currentInterface]?.day?.avgvis_km >= 10
+        : weather?.forecast?.forecastday[currentInterface]?.day?.avgvis_km >= 8
           ? 'Clear'
           : 'Bad',
-    Sunrise: '',
+    Sunrise: 'Sunrise',
   };
   const maxUV = Math.max(
     ...(weather?.forecast?.forecastday[currentInterface]?.hour.map(
@@ -190,9 +187,9 @@ const Elements = ({ route }) => {
         ? 'It is advisable to employ sun protection measures.'
         : ''
       }`,
-    Vision: `The current visibility is ${weather?.current?.vis_km} km`,
+    Vision: `The current visibility is ${weather?.current?.vis_km} km. Today, the average visibility is ${weather?.forecast?.forecastday[0]?.day?.avgvis_km} km`,
     Pressure: `The current pressure is ${weather?.current?.pressure_mb} mb. Today, the average pressure is ${averagePressure} mb.`,
-    Precipitation: `It has been precipitation of ${weather?.forecast?.forecastday[0]?.day?.totalprecip_mm}mm in last 24 hours.`,
+    Precipitation: `It has been precipitation of ${weather?.current?.precip_mm}mm in last 24 hours.`,
     'Rain Probability': `The chance of rain today is ${weather?.forecast?.forecastday[0]?.day?.daily_chance_of_rain}%. It is expected to be ${weather?.forecast?.forecastday[0]?.day?.daily_chance_of_rain < 20
       ? 'isolated'
       : weather?.forecast?.forecastday[0]?.day?.daily_chance_of_rain < 30
@@ -231,6 +228,11 @@ const Elements = ({ route }) => {
       ? 'It is advisable to employ sun protection measures.'
       : ''
       }`,
+      Vision: `On ${new Intl.DateTimeFormat('en-US', {
+      weekday: 'long',
+    }).format(
+      new Date(weather?.forecast?.forecastday[currentInterface]?.date),
+    )}, the average visibility is ${weather?.forecast?.forecastday[currentInterface]?.day?.avgvis_km} km.`,
     Pressure: `On ${new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
     }).format(
@@ -333,15 +335,24 @@ const Elements = ({ route }) => {
       isSelected: name === 'Sunrise',
     },
   ];
-  const sunrise = moment("05:42", "HH:mm");
-  const sunset = moment("17:48", "HH:mm");
-
-  // Sample data points for illustration (you can adjust these points to make the curve smooth)
-  const data = {
-    labels: ['00:00', '06:00', '12:00', '18:00', '24:00'],
+  const sunrise = moment(weather?.forecast?.forecastday[currentInterface]?.astro?.sunrise, 'h:mm A');
+  const sunset = moment(weather?.forecast?.forecastday[currentInterface]?.astro?.sunset, 'h:mm A');
+  const labels = ['00:00', '06:00', '12:00', '18:00', '24:00'];
+  const sunPositions = labels.map(label => {
+    const timeMoment = moment(label, 'HH:mm');
+    if (timeMoment.isBefore(sunrise) || timeMoment.isAfter(sunset)) {
+      return 0;
+    }
+    const totalMinutes = sunset.diff(sunrise, 'minutes');
+    const elapsedMinutes = timeMoment.diff(sunrise, 'minutes');
+    const sunPosition = (elapsedMinutes / totalMinutes) * 180;
+    return sunPosition;
+  });
+  const currentSunsetData = {
+    labels: labels,
     datasets: [
       {
-        data: [0, 30, 100, 30, 0], // Example: Change this based on actual timing
+        data: sunPositions,
       },
     ],
   };
@@ -363,7 +374,7 @@ const Elements = ({ route }) => {
           <ChevronDownIcon size="20" color="white" />
         </TouchableOpacity>
         <TouchableOpacity
-          className={`flex w-[200px] absolute right-0 top-10 rounded-xl bg-gray-800 h-[400px] flex-col ${openMenu ? 'block' : 'hidden'
+          className={`flex w-[220px] absolute right-0 top-10 rounded-xl bg-gray-800 h-auto flex-col ${openMenu ? 'block' : 'hidden'
             }`}>
           {menuItems.map((menuItem, index) => (
             <MenuItem
@@ -455,36 +466,60 @@ const Elements = ({ route }) => {
             {additionalEle[name]}
           </Text>
         </View>
-               { name === 'Sunrise' ? (
-          <View>
-          <Text style={{ fontSize: 18, textAlign: 'center', marginVertical: 10 }}>
-            Mặt trời mọc và lặn
-          </Text>
-          <LineChart
-            data={data}
-            width={400 - 32}
-            height={220}
-            yAxisLabel=""
-            chartConfig={{
-              backgroundGradientFrom: '#1E2923',
-              backgroundGradientTo: '#08130D',
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            }}
-            bezier
-            style={{
-              marginVertical: 8,
-              borderRadius: 16,
-            }}
-          />
-          <View style={{ paddingHorizontal: 16, marginTop: 20 }}>
-            <Text>Ánh sáng đầu tiên: {sunrise.subtract(21, 'minutes').format("HH:mm")}</Text>
-            <Text>Mặt trời mọc: {sunrise.format("HH:mm")}</Text>
-            <Text>Mặt trời lặn: {sunset.format("HH:mm")}</Text>
-            <Text>Ánh sáng cuối cùng: {sunset.add(21, 'minutes').format("HH:mm")}</Text>
-            <Text>Tổng ánh sáng ban ngày: {sunset.diff(sunrise, 'hours', true)} giờ</Text>
+        {name === 'Sunrise' ? (
+          <View className="w-full mx-12 pl-3">
+            <LineChart
+              data={currentSunsetData}
+              width={360}
+              height={250}
+              yAxisLabel=""
+              yAxisInterval={1}
+              withHorizontalLabels={false}
+              chartConfig={{
+                backgroundGradientFrom: '#2c3e50',
+                backgroundGradientTo: '#34495e',
+                color: (opacity = 1) => `rgba(0, 255, 255, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                propsForDots: {
+                  r: '4',
+                  strokeWidth: '2',
+                  stroke: '#34495e',
+                },
+                propsForBackgroundLines: {
+                  stroke: '#34495e',
+                  strokeDasharray: '',
+                },
+              }}
+              style={{
+                marginVertical: 1,
+                borderRadius: 12,
+              }}
+            />
+            <View className="flex flex-col gap-2 justify-between w-full pr-10 items-start" style={{ paddingHorizontal: 16, marginTop: 20 }}>
+              <View className="flex flex-row justify-between w-full">
+                <Text className="text-white font-bold text-xl">First Light:</Text>
+                <Text className="text-white font-bold text-xl">{moment(sunrise).subtract(21, 'minutes').format('HH:mm')}</Text>
+              </View>
+              <View className="flex flex-row justify-between w-full">
+                <Text className="text-white font-bold text-xl">Sunrise:</Text>
+                <Text className="text-white font-bold text-xl">{sunrise.format('HH:mm')}</Text>
+              </View>
+              <View className="flex flex-row justify-between w-full">
+                <Text className="text-white font-bold text-xl">Sunset:</Text>
+                <Text className="text-white font-bold text-xl">{sunset.format('HH:mm')}</Text>
+              </View>
+              <View className="flex flex-row justify-between w-full">
+                <Text className="text-white font-bold text-xl">Last Light:</Text>
+                <Text className="text-white font-bold text-xl">{moment(sunset).add(21, 'minutes').format('HH:mm')}</Text>
+              </View>
+              <View className="flex flex-row justify-between w-full">
+                <Text className="text-white font-bold text-xl">Total Daylight:</Text>
+                <Text className="text-white font-bold text-xl">
+                  {`${Math.floor(sunset.diff(sunrise, 'minutes') / 60)} hours ${sunset.diff(sunrise, 'minutes') % 60} mins`}
+                </Text>
+              </View>
+            </View>
           </View>
-        </View>
         ) : (
           <LineChart
             data={{
@@ -527,7 +562,7 @@ const Elements = ({ route }) => {
               justifyContent: 'flex-start',
               width: 400,
               height: 350,
-              marginRight: 20,
+              marginLeft: 40,
             }}
           />
         )}

@@ -1,12 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import {
-  View,
-  Text,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import {View, Text, Image, TextInput, TouchableOpacity, ScrollView} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {MagnifyingGlassIcon, XMarkIcon} from 'react-native-heroicons/outline';
@@ -17,7 +10,7 @@ import {fetchLocations, fetchWeatherForecast} from '../../api/weather';
 import * as Progress from 'react-native-progress';
 import {StatusBar} from 'expo-status-bar';
 import {weatherImages} from '../../constants';
-// import {Dimensions} from 'react-native';
+import moment from 'moment';
 import {getData, storeData} from '../../utils/asyncStorage';
 import {useNavigation} from '@react-navigation/native';
 
@@ -30,13 +23,11 @@ export default function HomeScreen() {
   const navigation = useNavigation();
 
   const navigateToScreen = screenName => {
-    // Navigate to the specified screen
     navigation.navigate(screenName, {
       prop1: weather,
     });
   };
 
-  // Usage example
   const navigateToWind = () => navigateToScreen('Wind');
   const navigateToHumidity = () => navigateToScreen('Humidity');
   const navigateToUv = () => navigateToScreen('Uv Index');
@@ -46,10 +37,8 @@ export default function HomeScreen() {
   const navigateToVision = () => navigateToScreen('Vision');
   const navigateToSunrise = () => navigateToScreen('Sunrise');
   const handleSearch = search => {
-    // console.log('value: ',search);
     if (search && search.length > 2)
       {fetchLocations({cityName: search}).then(data => {
-        // console.log('got locations: ',data);
         setLocations(data);
       });}
   };
@@ -101,9 +90,8 @@ export default function HomeScreen() {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      className="flex w-full relative flex-col">
+      className="flex w-full relative flex-col  ">
       <StatusBar style="light" />
-
       <Image
         source={require('../../assets/images/clouds-blue-sky.jpg')}
         className="absolute w-full h-full  object-cover"
@@ -152,7 +140,7 @@ export default function HomeScreen() {
                     : '';
                   return (
                     <TouchableOpacity
-                    key={loc.id || index} 
+                    key={loc.id || index}
                       onPress={() => handleLocation(loc)}
                       className={
                         'flex-row items-center border-0 p-3 px-4 mb-1 ' +
@@ -176,7 +164,7 @@ export default function HomeScreen() {
               Today,
               <Text className="text-xl font-semibold text-gray-300">
                 {' '}
-                {location?.localtime}
+                {moment(location?.localtime).format('DD-MM-YYYY')}
               </Text>
             </Text>
 
@@ -347,7 +335,7 @@ export default function HomeScreen() {
           </View>
 
           {/* forecast for next days */}
-          <View className="mb-2 mt-16 space-y-3">
+          <View className="mb-4 mt-16 space-y-3 ">
             <View className="flex-row items-center mx-5 space-x-2">
               <CalendarDaysIcon size="22" color="white" />
               <Text className="text-white text-base">Hourly forecast</Text>
@@ -401,7 +389,7 @@ export default function HomeScreen() {
                 })}
             </View>
           </View>
-          <View className="mb-2 space-y-3">
+          <View className="mb-2 space-y-3 pb-8">
             <View className="flex-row items-center mx-5 space-x-2">
               <CalendarDaysIcon size="22" color="white" />
               <Text className="text-white text-base">Daily forecast</Text>
@@ -415,7 +403,6 @@ export default function HomeScreen() {
                 const options = {weekday: 'long'};
                 let dayName = date.toLocaleDateString('en-US', options);
                 dayName = dayName.split(',')[0];
-
                 return (
                   <TouchableOpacity c>
                     <View
@@ -427,7 +414,6 @@ export default function HomeScreen() {
                         className="w-11 h-11"
                       />
                       <Text className="text-white">{dayName}</Text>
-
                       <Text className="text-white text-xl font-semibold">
                         {item?.day?.avgtemp_c}&#176;
                       </Text>

@@ -19,7 +19,7 @@ export const weatherImages = {
     'Mist': require('../assets/images/mist.png'),
     'other': require('../assets/images/moderaterain.png'),
     'Light drizzle':require('../assets/images/moderaterain.png'),
-}
+};
 export const weatherIcon = {
     'Humidity': require('../assets/icons/drop.png'),
     'Uv Index': require('../assets/icons/rays.png'),
@@ -29,7 +29,7 @@ export const weatherIcon = {
     'Rain Probability': require('../assets/icons/precipitation.png'),
     'Vision': require('../assets/icons/vision.png'),
     'Sunrise': require('../assets/icons/sunrise.png'),
-}
+};
 export const weatherEndpoint = {
     'Humidity': 'humidity',
     'Uv Index': 'uv',
@@ -39,7 +39,7 @@ export const weatherEndpoint = {
     'Rain Probability': 'chance_of_rain',
     'Vision': 'vis_km',
     'Sunrise': '',
-}
+};
 export const weatherUnit = {
     'Humidity': '%',
     'Uv Index': '',
@@ -49,7 +49,7 @@ export const weatherUnit = {
     'Rain Probability':'%',
     'Vision': 'km',
     'Sunrise': '',
-}
+};
 export const subName = {
     'humidity': 'avghumidity',
     'uv': 'uv',
@@ -58,7 +58,7 @@ export const subName = {
     'precip_mm': 'totalprecip_mm',
     'chance_of_rain': 'daily_chance_of_rain',
     'vis_km': 'avgvis_km',
-}
+};
 export const comparisonName = {
     'Humidity': 'average humidity',
     'Uv Index': 'average UV Index',
@@ -67,7 +67,7 @@ export const comparisonName = {
     'Rain Probability':'probability of rain',
     'Vision': 'vision range',
     'Sunrise': '',
-}
+};
 export const mapWindDirection = direction => {
     const directionMap = {
       N: 'North',
@@ -90,3 +90,4 @@ export const mapWindDirection = direction => {
 
     return directionMap[direction] || direction;
   };
+

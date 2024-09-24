@@ -228,7 +228,7 @@ const Elements = ({ route }) => {
       ? 'It is advisable to employ sun protection measures.'
       : ''
       }`,
-      Vision: `On ${new Intl.DateTimeFormat('en-US', {
+    Vision: `On ${new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
     }).format(
       new Date(weather?.forecast?.forecastday[currentInterface]?.date),
@@ -356,13 +356,38 @@ const Elements = ({ route }) => {
       },
     ],
   };
+  const currentWeather = weather?.current?.condition?.text.toLowerCase();
+  const getImageSource = (weatherImage) => {
+    switch (weatherImage.toLowerCase()) {
+      case 'light rain shower':
+      case 'rainy':
+      case 'patchy rain nearby':
+      case 'moderate rain':
+      case 'patchy rain possible':
+      case 'light drizzle':
+        return require('../../assets/rainy.jpg');
+      case 'cloudy':
+      case 'overcast':
+      case 'partly cloudy':
+        return require('../../assets/cloudy.jpg');
+      case 'thunder':
+      case 'moderate or heavy rain with thunder':
+        return require('../../assets/thunder.jpg');
+      case 'clear':
+      case 'sunny':
+        return require('../../assets/sunny.jpg');
+      default:
+        return require('../../assets/windy.jpg');
+    }
+  };
+  const imageSource = getImageSource(currentWeather);
 
   return (
     <ScrollView
       style={[{ height: screenHeight }]}
       className="w-full flex relative  ">
       <Image
-        source={require('../../assets/wind.jpg')}
+        source={imageSource}
         className="absolute w-full h-full  object-cover "
       />
       <View className="w-full h-full absolute bg-black/50 backdrop-blur-sm" />
@@ -399,7 +424,7 @@ const Elements = ({ route }) => {
         <Text className="text-white font-semibold text-xl ">{route.name}</Text>
       </View>
 
-      <View className="w-full flex flex-col gap-7   h-full justify-start items-start pt-24 pl-3 ">
+      <View className="w-full flex flex-col gap-4 h-full justify-start items-start pt-24 pl-3 ">
         <View className="flex-row w-[400] justify-between gap-2 flex p-4">
           {[...Array(7).keys()].map(index => (
             <TouchableOpacity
@@ -498,73 +523,69 @@ const Elements = ({ route }) => {
             <View className="flex flex-col gap-2 justify-between w-full pr-10 items-start" style={{ paddingHorizontal: 16, marginTop: 20 }}>
               <View className="flex flex-row justify-between w-full">
                 <Text className="text-white font-bold text-xl">First Light:</Text>
-                <Text className="text-white font-bold text-xl">{moment(sunrise).subtract(21, 'minutes').format('HH:mm')}</Text>
+                <Text className="text-gray-400 font-semibold text-xl">{moment(sunrise).subtract(21, 'minutes').format('HH:mm')}</Text>
               </View>
               <View className="flex flex-row justify-between w-full">
                 <Text className="text-white font-bold text-xl">Sunrise:</Text>
-                <Text className="text-white font-bold text-xl">{sunrise.format('HH:mm')}</Text>
+                <Text className="text-gray-400 font-semibold text-xl">{sunrise.format('HH:mm')}</Text>
               </View>
               <View className="flex flex-row justify-between w-full">
                 <Text className="text-white font-bold text-xl">Sunset:</Text>
-                <Text className="text-white font-bold text-xl">{sunset.format('HH:mm')}</Text>
+                <Text className="text-gray-400 font-semibold text-xl">{sunset.format('HH:mm')}</Text>
               </View>
               <View className="flex flex-row justify-between w-full">
                 <Text className="text-white font-bold text-xl">Last Light:</Text>
-                <Text className="text-white font-bold text-xl">{moment(sunset).add(21, 'minutes').format('HH:mm')}</Text>
+                <Text className="text-gray-400 font-semibold text-xl">{moment(sunset).add(21, 'minutes').format('HH:mm')}</Text>
               </View>
               <View className="flex flex-row justify-between w-full">
                 <Text className="text-white font-bold text-xl">Total Daylight:</Text>
-                <Text className="text-white font-bold text-xl">
+                <Text className="text-gray-400 font-semibold text-xl">
                   {`${Math.floor(sunset.diff(sunrise, 'minutes') / 60)} hours ${sunset.diff(sunrise, 'minutes') % 60} mins`}
                 </Text>
               </View>
             </View>
           </View>
         ) : (
-          <LineChart
-            data={{
-              labels: ['00', '06', '12', '18'],
-              datasets: [
-                {
-                  data: dailyStats,
+          <View className="w-full ml-12">
+            <LineChart
+              data={{
+                labels: ['00', '06', '12', '18'],
+                datasets: [
+                  {
+                    data: dailyStats,
+                  },
+                ],
+              }}
+              width={360}
+              height={250}
+              hideGrid={true}
+              fromZero={true}
+              withDots={false}
+              segments={6}
+              yAxisSuffix={weatherUnit[name]}
+              yAxisInterval={1}
+              chartConfig={{
+                backgroundGradientFrom: '#2c3e50',
+                backgroundGradientTo: '#34495e',
+                decimalPlaces: 0,
+                color: () => 'rgba(0, 225, 255, 0.8)',
+                labelColor: () => 'rgba(255, 255, 255, 1)',
+                strokeWidth: 3,
+                propsForBackgroundLines: {
+                  stroke: '#FFFFFF',
+                  opacity: 0.2,
                 },
-              ],
-            }}
-            width={400}
-            height={340}
-            hideGrid={true}
-            fromZero={true}
-            withDots={false}
-            segments={6}
-            yAxisSuffix={weatherUnit[name]}
-            yAxisInterval={1}
-            chartConfig={{
-              backgroundGradientFromOpacity: 0,
-              backgroundGradientToOpacity: 0,
-              decimalPlaces: 0,
-              color: () => 'rgba(0, 225, 255, 0.8)',
-              labelColor: () => 'rgba(255, 255, 255, 1)',
-              strokeWidth: 3,
-              propsForBackgroundLines: {
-                stroke: '#FFFFFF',
-                opacity: 0.2,
-              },
-              style: {
-                borderRadius: 20,
-                borderWidth: 2,
-                borderColor: 'rgba(255, 255, 255, 0.9)',
-              },
-            }}
-            bezier
-            style={{
-              display: 'flex',
-              alignSelf: 'center',
-              justifyContent: 'flex-start',
-              width: 400,
-              height: 350,
-              marginLeft: 40,
-            }}
-          />
+              }}
+              bezier
+              style={{
+                borderRadius: 12,
+                paddingTop: 25,
+                marginBottom: 10,
+                marginHorizontal:20,
+                width: '100%',
+              }}
+            />
+          </View>
         )}
         <View className={`flex flex-col gap-2 ${name !== 'Sunrise' ? 'block' : 'hidden'}`}>
           <Text className="text-white text-xl w-full font-semibold pl-4 h-auto">

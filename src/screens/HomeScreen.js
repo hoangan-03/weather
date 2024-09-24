@@ -403,7 +403,7 @@ export default function HomeScreen() {
                 let dayName = date.toLocaleDateString('en-US', options);
                 dayName = dayName.split(',')[0];
                 return (
-                  <TouchableOpacity c>
+                  <TouchableOpacity key={item.date_epoch || index} >
                     <View
                       key={index}
                       className="flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4"

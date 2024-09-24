@@ -16,7 +16,7 @@ import { theme } from '../../theme';
 import { XMarkIcon } from 'react-native-heroicons/outline';
 import { ChevronDownIcon } from 'react-native-heroicons/outline';
 import { CheckIcon } from 'react-native-heroicons/solid';
-
+import moment from 'moment';
 const MenuItem = ({ name, iconName, onPress, isSelected }) => (
   <TouchableOpacity
     className="w-full h-auto justify-between text-center hover:bg-gray-800 gap-4 flex flex-row pr-1 pl-3 py-2 items-center"
@@ -333,6 +333,18 @@ const Elements = ({ route }) => {
       isSelected: name === 'Sunrise',
     },
   ];
+  const sunrise = moment("05:42", "HH:mm");
+  const sunset = moment("17:48", "HH:mm");
+
+  // Sample data points for illustration (you can adjust these points to make the curve smooth)
+  const data = {
+    labels: ['00:00', '06:00', '12:00', '18:00', '24:00'],
+    datasets: [
+      {
+        data: [0, 30, 100, 30, 0], // Example: Change this based on actual timing
+      },
+    ],
+  };
 
   return (
     <ScrollView
@@ -443,53 +455,82 @@ const Elements = ({ route }) => {
             {additionalEle[name]}
           </Text>
         </View>
-        <LineChart
-          data={{
-            labels: ['00', '06', '12', '18'],
-            datasets: [
-              {
-                data: dailyStats,
+               { name === 'Sunrise' ? (
+          <View>
+          <Text style={{ fontSize: 18, textAlign: 'center', marginVertical: 10 }}>
+            Mặt trời mọc và lặn
+          </Text>
+          <LineChart
+            data={data}
+            width={400 - 32}
+            height={220}
+            yAxisLabel=""
+            chartConfig={{
+              backgroundGradientFrom: '#1E2923',
+              backgroundGradientTo: '#08130D',
+              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            }}
+            bezier
+            style={{
+              marginVertical: 8,
+              borderRadius: 16,
+            }}
+          />
+          <View style={{ paddingHorizontal: 16, marginTop: 20 }}>
+            <Text>Ánh sáng đầu tiên: {sunrise.subtract(21, 'minutes').format("HH:mm")}</Text>
+            <Text>Mặt trời mọc: {sunrise.format("HH:mm")}</Text>
+            <Text>Mặt trời lặn: {sunset.format("HH:mm")}</Text>
+            <Text>Ánh sáng cuối cùng: {sunset.add(21, 'minutes').format("HH:mm")}</Text>
+            <Text>Tổng ánh sáng ban ngày: {sunset.diff(sunrise, 'hours', true)} giờ</Text>
+          </View>
+        </View>
+        ) : (
+          <LineChart
+            data={{
+              labels: ['00', '06', '12', '18'],
+              datasets: [
+                {
+                  data: dailyStats,
+                },
+              ],
+            }}
+            width={400}
+            height={340}
+            hideGrid={true}
+            fromZero={true}
+            withDots={false}
+            segments={6}
+            yAxisSuffix={weatherUnit[name]}
+            yAxisInterval={1}
+            chartConfig={{
+              backgroundGradientFromOpacity: 0,
+              backgroundGradientToOpacity: 0,
+              decimalPlaces: 0,
+              color: () => 'rgba(0, 225, 255, 0.8)',
+              labelColor: () => 'rgba(255, 255, 255, 1)',
+              strokeWidth: 3,
+              propsForBackgroundLines: {
+                stroke: '#FFFFFF',
+                opacity: 0.2,
               },
-            ],
-          }}
-          width={400}
-          height={340}
-          hideGrid={true}
-          fromZero={true}
-          withDots={false}
-          segments={6}
-          yAxisSuffix={weatherUnit[name]}
-          yAxisInterval={1}
-          chartConfig={{
-            backgroundGradientFromOpacity: 0,
-            backgroundGradientToOpacity: 0,
-
-            decimalPlaces: 0,
-            color: () => 'rgba(0, 225, 255, 0.8)',
-            labelColor: () => 'rgba(255, 255, 255, 1)',
-            strokeWidth: 3,
-
-            propsForBackgroundLines: {
-              stroke: '#FFFFFF',
-              opacity: 0.2,
-            },
-            style: {
-              borderRadius: 20,
-              borderWidth: 2,
-
-              borderColor: 'rgba(255, 255, 255, 0.9)',
-            },
-          }}
-          bezier
-          style={{
-            display: 'flex',
-            alignSelf: 'center',
-            justifyContent: 'flex-start',
-            width: 400,
-            height: 350,
-            marginRight: 20,
-          }}
-        />
+              style: {
+                borderRadius: 20,
+                borderWidth: 2,
+                borderColor: 'rgba(255, 255, 255, 0.9)',
+              },
+            }}
+            bezier
+            style={{
+              display: 'flex',
+              alignSelf: 'center',
+              justifyContent: 'flex-start',
+              width: 400,
+              height: 350,
+              marginRight: 20,
+            }}
+          />
+        )}
         <View className={`flex flex-col gap-2 ${name !== 'Sunrise' ? 'block' : 'hidden'}`}>
           <Text className="text-white text-xl w-full font-semibold pl-4 h-auto">
             Summary
@@ -505,7 +546,6 @@ const Elements = ({ route }) => {
             </Text>
           </View>
         </View>
-
         <View
           className={`flex flex-col gap-2 ${currentInterface === 0 && name !== 'Pressure' && name !== 'Sunrise' ? 'block' : 'hidden'
             }`}>
